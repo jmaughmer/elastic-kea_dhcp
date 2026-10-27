@@ -1,0 +1,140 @@
+{
+  "template": {
+    "mappings": {
+      "dynamic_templates": [],
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "message": { "type": "match_only_text" },
+        "tags": { "type": "keyword" },
+        "ecs": { "properties": { "version": { "type": "keyword", "ignore_above": 1024 } } },
+        "error": { "properties": { "message": { "type": "match_only_text" } } },
+        "event": {
+          "properties": {
+            "action": { "type": "keyword", "ignore_above": 1024 },
+            "category": { "type": "keyword", "ignore_above": 1024 },
+            "code": { "type": "keyword", "ignore_above": 1024 },
+            "dataset": { "type": "constant_keyword" },
+            "kind": { "type": "keyword", "ignore_above": 1024 },
+            "module": { "type": "constant_keyword", "value": "kea" },
+            "original": { "type": "keyword", "index": false, "doc_values": false },
+            "outcome": { "type": "keyword", "ignore_above": 1024 },
+            "timezone": { "type": "keyword", "ignore_above": 1024 },
+            "type": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "log": {
+          "properties": {
+            "level": { "type": "keyword", "ignore_above": 1024 },
+            "logger": { "type": "keyword", "ignore_above": 1024 },
+            "file": { "properties": { "path": { "type": "keyword", "ignore_above": 1024 } } }
+          }
+        },
+        "process": {
+          "properties": {
+            "name": { "type": "keyword", "ignore_above": 1024 },
+            "pid": { "type": "long" },
+            "thread": { "properties": { "id": { "type": "long" } } }
+          }
+        },
+        "service": {
+          "properties": {
+            "name": { "type": "keyword", "ignore_above": 1024 },
+            "type": { "type": "keyword", "ignore_above": 1024 },
+            "version": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "host": {
+          "properties": {
+            "hostname": { "type": "keyword", "ignore_above": 1024 },
+            "name": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "network": {
+          "properties": {
+            "protocol": { "type": "keyword", "ignore_above": 1024 },
+            "type": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "client": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "mac": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "source": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "port": { "type": "long" }
+          }
+        },
+        "destination": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "port": { "type": "long" }
+          }
+        },
+        "observer": {
+          "properties": {
+            "ingress": { "properties": { "interface": { "properties": { "name": { "type": "keyword", "ignore_above": 1024 } } } } },
+            "egress": { "properties": { "interface": { "properties": { "name": { "type": "keyword", "ignore_above": 1024 } } } } }
+          }
+        },
+        "related": {
+          "properties": {
+            "ip": { "type": "ip" },
+            "hosts": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
+        "kea": {
+          "properties": {
+            "logger": { "properties": { "component": { "type": "keyword", "ignore_above": 1024 } } },
+            "transaction_id": { "type": "keyword", "ignore_above": 1024 },
+            "client": {
+              "properties": {
+                "classes": { "type": "keyword", "ignore_above": 1024 },
+                "duid": { "type": "keyword", "ignore_above": 1024 },
+                "hwaddr": { "type": "keyword", "ignore_above": 1024 },
+                "hwtype": { "type": "integer" },
+                "id": { "type": "keyword", "ignore_above": 1024 }
+              }
+            },
+            "lease": {
+              "properties": {
+                "address": { "type": "ip" },
+                "duration": { "type": "long" },
+                "iaid": { "type": "long" },
+                "prefix_length": { "type": "integer" },
+                "type": { "type": "keyword", "ignore_above": 1024 }
+              }
+            },
+            "subnet": {
+              "properties": {
+                "id": { "type": "long" },
+                "prefix": { "type": "keyword", "ignore_above": 1024 }
+              }
+            },
+            "shared_network": { "properties": { "name": { "type": "keyword", "ignore_above": 1024 } } },
+            "allocation": { "properties": { "attempts": { "type": "long" } } },
+            "dhcp": {
+              "properties": {
+                "message_type": { "type": "keyword", "ignore_above": 1024 },
+                "message_type_code": { "type": "integer" }
+              }
+            },
+            "ha": {
+              "properties": {
+                "partner_state": { "type": "keyword", "ignore_above": 1024 },
+                "previous_state": { "type": "keyword", "ignore_above": 1024 },
+                "state": { "type": "keyword", "ignore_above": 1024 }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Field mappings for Kea DHCP logs parsed by the logs-kea.dhcp ingest pipeline",
+    "project": "https://github.com/jmaughmer/elastic-kea_dhcp"
+  }
+}

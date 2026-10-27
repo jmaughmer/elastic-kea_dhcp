@@ -1,0 +1,44 @@
+# Filebeat example for shipping Kea DHCP logs into the logs-kea.dhcp data stream.
+#
+# Assumes Kea's default file output in /var/log/kea/ (kea-dhcp4.log,
+# kea-dhcp6.log, kea-dhcp-ddns.log, kea-ctrl-agent.log). Kea rotates these
+# itself to <name>.log.1, .2, ...; the glob below follows the rotated files so
+# nothing is lost when a rotation happens mid-read.
+#
+# Requires Filebeat 8.12+ and the Elasticsearch assets from this repository
+# (scripts/install.sh). The index template sets index.default_pipeline, so
+# no pipeline needs to be named here.
+
+filebeat.inputs:
+  - type: filestream
+    id: kea-dhcp
+    paths:
+      - /var/log/kea/kea-dhcp4.log*
+      - /var/log/kea/kea-dhcp6.log*
+      - /var/log/kea/kea-dhcp-ddns.log*
+      - /var/log/kea/kea-ctrl-agent.log*
+    prospector.scanner.exclude_files: ['\.gz$']
+    # Fingerprinting keeps file identity stable across Kea's rename-based rotation.
+    file_identity.fingerprint: ~
+    prospector.scanner.fingerprint.enabled: true
+    parsers:
+      # Debug-level packet dumps (DHCP4_QUERY_DATA, DHCP4_RESPONSE_DATA, ...)
+      # span several lines. Every Kea event starts with its timestamp.
+      - multiline:
+          type: pattern
+          pattern: '^\d{4}-\d{2}-\d{2} '
+          negate: true
+          match: after
+    processors:
+      # Kea logs local time without an offset; event.timezone lets the
+      # pipeline convert it correctly.
+      - add_locale: ~
+    index: logs-kea.dhcp-default
+
+# Writing to a data stream that this repository's template manages.
+setup.template.enabled: false
+setup.ilm.enabled: false
+
+output.elasticsearch:
+  hosts: ["https://elasticsearch.example.com:9200"]
+  api_key: "${ES_API_KEY}"

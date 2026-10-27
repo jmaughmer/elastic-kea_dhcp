@@ -1,0 +1,362 @@
+[
+  {
+    "@timestamp": "2026-10-27T08:00:02.410Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "server-started",
+      "category": [
+        "process"
+      ],
+      "code": "DHCP6_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp6"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp6.dhcp6"
+    },
+    "message": "Kea DHCPv6 server version 3.0.1 started",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906214741888
+      }
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea",
+      "version": "3.0.1"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:10.211Z",
+    "client": {
+      "ip": "2001:db8:1::100",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-offered",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP6_LEASE_ADVERT",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "protocol"
+      ]
+    },
+    "kea": {
+      "client": {
+        "duid": "00:03:00:01:08:00:2b:02:3f:4e",
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "2001:db8:1::100",
+        "iaid": 1,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x9cc3a7"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp6.leases"
+    },
+    "message": "duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x9cc3a7: lease for address 2001:db8:1::100 and iaid=1 will be advertised",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906206349056
+      }
+    },
+    "related": {
+      "ip": [
+        "2001:db8:1::100"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:10.260Z",
+    "client": {
+      "ip": "2001:db8:1::100",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-allocated",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP6_LEASE_ALLOC",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "kea": {
+      "client": {
+        "duid": "00:03:00:01:08:00:2b:02:3f:4e",
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "2001:db8:1::100",
+        "duration": 7200,
+        "iaid": 1,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x9cc3a7"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp6.leases"
+    },
+    "message": "duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x9cc3a7: lease for address 2001:db8:1::100 and iaid=1 has been allocated for 7200 seconds",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906206349056
+      }
+    },
+    "related": {
+      "ip": [
+        "2001:db8:1::100"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:04:44.913Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-allocated",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP6_PD_LEASE_ALLOC",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "kea": {
+      "client": {
+        "duid": "00:01:00:01:2c:5e:7a:10:00:0c:29:7a:11:b2"
+      },
+      "lease": {
+        "address": "2001:db8:8:100::",
+        "duration": 7200,
+        "iaid": 15,
+        "prefix_length": 56,
+        "type": "prefix"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x1b2c3d"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp6.leases"
+    },
+    "message": "duid=[00:01:00:01:2c:5e:7a:10:00:0c:29:7a:11:b2], [no hwaddr info], tid=0x1b2c3d: lease for prefix 2001:db8:8:100::/56 and iaid=15 has been allocated for 7200 seconds",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906206349056
+      }
+    },
+    "related": {
+      "ip": [
+        "2001:db8:8:100::"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:50:03.004Z",
+    "client": {
+      "ip": "2001:db8:1::100",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-released",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP6_RELEASE_NA",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "end"
+      ]
+    },
+    "kea": {
+      "client": {
+        "duid": "00:03:00:01:08:00:2b:02:3f:4e",
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "2001:db8:1::100",
+        "iaid": 1,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x44aa01"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp6.leases"
+    },
+    "message": "duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x44aa01: binding for address 2001:db8:1::100 and iaid=1 was released properly",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906206349056
+      }
+    },
+    "related": {
+      "ip": [
+        "2001:db8:1::100"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:55:20.700Z",
+    "client": {
+      "mac": "A4-83-E7-01-02-03"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "allocation-failed",
+      "category": [
+        "network"
+      ],
+      "code": "ALLOC_ENGINE_V6_ALLOC_FAIL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "allocation": {
+        "attempts": 65536
+      },
+      "client": {
+        "duid": "00:03:00:01:a4:83:e7:01:02:03",
+        "hwaddr": "a4:83:e7:01:02:03",
+        "hwtype": 1
+      },
+      "logger": {
+        "component": "alloc-engine"
+      },
+      "transaction_id": "0x77bb12"
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp6.alloc-engine"
+    },
+    "message": "duid=[00:03:00:01:a4:83:e7:01:02:03], [hwtype=1 a4:83:e7:01:02:03], tid=0x77bb12: failed to allocate an IPv6 lease after 65536 attempt(s)",
+    "network": {
+      "protocol": "dhcpv6",
+      "type": "ipv6"
+    },
+    "process": {
+      "name": "kea-dhcp6",
+      "pid": 1880,
+      "thread": {
+        "id": 139906206349056
+      }
+    },
+    "service": {
+      "name": "kea-dhcp6",
+      "type": "kea"
+    }
+  }
+]

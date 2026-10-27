@@ -1,0 +1,27 @@
+2026-10-27 08:00:01.112 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_STARTING Kea DHCPv4 server version 3.0.1 (stable) starting
+2026-10-27 08:00:01.245 INFO  [kea-dhcp4.dhcpsrv/1873.140226115839872] DHCPSRV_CFGMGR_ADD_IFACE listening on interface eth0
+2026-10-27 08:00:01.247 INFO  [kea-dhcp4.dhcpsrv/1873.140226115839872] DHCPSRV_MEMFILE_DB opening memory file lease database: lfc-interval=3600 name=/var/lib/kea/kea-leases4.csv persist=true type=memfile universe=4
+2026-10-27 08:00:01.301 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_CONFIG_COMPLETE DHCPv4 server has completed configuration: added IPv4 subnets: 2; DDNS: disabled
+2026-10-27 08:00:01.302 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_STARTED Kea DHCPv4 server version 3.0.1 started
+2026-10-27 08:01:13.554 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_LEASE_OFFER [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x3d18f5e4: lease 192.0.2.10 will be offered
+2026-10-27 08:01:13.601 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_LEASE_ALLOC [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x3d18f5e4: lease 192.0.2.10 has been allocated for 4000 seconds
+2026-10-27 08:02:40.017 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_LEASE_ALLOC [hwtype=1 00:0c:29:7a:11:b2], cid=[no info], tid=0x9a01c3e7: lease 192.0.2.11 has been allocated for 4000 seconds
+2026-10-27 08:05:22.880 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_INIT_REBOOT [hwtype=1 3c:22:fb:10:45:9a], cid=[01:3c:22:fb:10:45:9a], tid=0x11aa22bb: client is in INIT-REBOOT state and requests address 198.51.100.40
+2026-10-27 08:05:22.881 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_NO_LEASE_INIT_REBOOT [hwtype=1 3c:22:fb:10:45:9a], cid=[01:3c:22:fb:10:45:9a], tid=0x11aa22bb: no lease for address 198.51.100.40 requested by INIT-REBOOT client
+2026-10-27 08:10:02.004 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_LEASE_REUSE [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x55e1a0c2: lease 192.0.2.10 has been reused for 3620 seconds
+2026-10-27 08:15:45.330 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_RELEASE [hwtype=1 00:0c:29:7a:11:b2], cid=[no info], tid=0x7f00aa01: address 192.0.2.11 was released properly.
+2026-10-27 08:20:09.100 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_DECLINE_LEASE Received DHCPDECLINE for addr 192.0.2.12 from client [hwtype=1 a4:83:e7:01:02:03], cid=[no info], tid=0x0badf00d. The lease will be unavailable for 86400 seconds.
+2026-10-27 08:25:31.777 WARN  [kea-dhcp4.alloc-engine/1873.140226107447040] ALLOC_ENGINE_V4_ALLOC_FAIL_SUBNET [hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: failed to allocate an IPv4 address in the subnet 192.0.2.0/24, subnet-id 1, shared network (none)
+2026-10-27 08:25:31.778 WARN  [kea-dhcp4.alloc-engine/1873.140226107447040] ALLOC_ENGINE_V4_ALLOC_FAIL [hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: failed to allocate an IPv4 address after 254 attempt(s)
+2026-10-27 08:25:31.779 WARN  [kea-dhcp4.alloc-engine/1873.140226107447040] ALLOC_ENGINE_V4_ALLOC_FAIL_CLASSES [hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: Failed to allocate an IPv4 address for client with classes: ALL, KNOWN, UNKNOWN
+2026-10-27 08:30:00.020 DEBUG [kea-dhcp4.packets/1873.140226107447040] DHCP4_PACKET_RECEIVED [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: DHCPDISCOVER (type 1) received from 0.0.0.0 to 255.255.255.255 on interface eth0
+2026-10-27 08:30:00.022 DEBUG [kea-dhcp4.dhcpsrv/1873.140226107447040] DHCP4_SUBNET_SELECTED [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: the subnet with ID 1 was selected for client assignments
+2026-10-27 08:30:00.024 DEBUG [kea-dhcp4.packets/1873.140226107447040] DHCP4_PACKET_SEND [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: trying to send packet DHCPOFFER (type 2) from 192.0.2.1:67 to 192.0.2.10:68 on interface eth0
+2026-10-27 08:30:00.025 DEBUG [kea-dhcp4.options/1873.140226107447040] DHCP4_RESPONSE_DATA [hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: responding with packet DHCPOFFER (type 2), packet details: local_address=192.0.2.1:67, remote_address=192.0.2.10:68, msg_type=DHCPOFFER (2), trans_id=0x6a8c1f20,
+options:
+  type=001, len=004: 4294967040 (uint32)
+  type=003, len=004: 192.0.2.1
+  type=051, len=004: 4000 (uint32)
+2026-10-27 08:40:12.500 ERROR [kea-dhcp4.dhcpsrv/1873.140226115839872] DHCPSRV_MEMFILE_LFC_EXECUTE_FAILED execution of the LFC failed: unable to execute /usr/sbin/kea-lfc
+2026-10-27 09:00:00.900 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_STATE_TRANSITION server1: server transitions from WAITING to READY state, partner state is READY
+2026-10-27 18:00:00.001 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_SHUTDOWN server shutdown

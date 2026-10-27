@@ -1,0 +1,1302 @@
+[
+  {
+    "@timestamp": "2026-10-27T08:00:01.112Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCP4_STARTING",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "Kea DHCPv4 server version 3.0.1 (stable) starting",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea",
+      "version": "3.0.1"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.245Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCPSRV_CFGMGR_ADD_IFACE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcpsrv"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcpsrv"
+    },
+    "message": "listening on interface eth0",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.247Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCPSRV_MEMFILE_DB",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcpsrv"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcpsrv"
+    },
+    "message": "opening memory file lease database: lfc-interval=3600 name=/var/lib/kea/kea-leases4.csv persist=true type=memfile universe=4",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.301Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-applied",
+      "category": [
+        "configuration"
+      ],
+      "code": "DHCP4_CONFIG_COMPLETE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "DHCPv4 server has completed configuration: added IPv4 subnets: 2; DDNS: disabled",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.302Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "server-started",
+      "category": [
+        "process"
+      ],
+      "code": "DHCP4_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "Kea DHCPv4 server version 3.0.1 started",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea",
+      "version": "3.0.1"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:01:13.554Z",
+    "client": {
+      "ip": "192.0.2.10",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-offered",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_LEASE_OFFER",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "protocol"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "lease": {
+        "address": "192.0.2.10",
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x3d18f5e4"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x3d18f5e4: lease 192.0.2.10 will be offered",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.10"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:01:13.601Z",
+    "client": {
+      "ip": "192.0.2.10",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-allocated",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_LEASE_ALLOC",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "lease": {
+        "address": "192.0.2.10",
+        "duration": 4000,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x3d18f5e4"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x3d18f5e4: lease 192.0.2.10 has been allocated for 4000 seconds",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.10"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:02:40.017Z",
+    "client": {
+      "ip": "192.0.2.11",
+      "mac": "00-0C-29-7A-11-B2"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-allocated",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_LEASE_ALLOC",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "00:0c:29:7a:11:b2",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "192.0.2.11",
+        "duration": 4000,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x9a01c3e7"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 00:0c:29:7a:11:b2], cid=[no info], tid=0x9a01c3e7: lease 192.0.2.11 has been allocated for 4000 seconds",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.11"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:05:22.880Z",
+    "client": {
+      "mac": "3C-22-FB-10-45-9A"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "init-reboot",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_INIT_REBOOT",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "protocol"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "3c:22:fb:10:45:9a",
+        "hwtype": 1,
+        "id": "01:3c:22:fb:10:45:9a"
+      },
+      "lease": {
+        "address": "198.51.100.40",
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x11aa22bb"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 3c:22:fb:10:45:9a], cid=[01:3c:22:fb:10:45:9a], tid=0x11aa22bb: client is in INIT-REBOOT state and requests address 198.51.100.40",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "198.51.100.40"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:05:22.881Z",
+    "client": {
+      "mac": "3C-22-FB-10-45-9A"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-not-found",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_NO_LEASE_INIT_REBOOT",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "3c:22:fb:10:45:9a",
+        "hwtype": 1,
+        "id": "01:3c:22:fb:10:45:9a"
+      },
+      "lease": {
+        "address": "198.51.100.40",
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x11aa22bb"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 3c:22:fb:10:45:9a], cid=[01:3c:22:fb:10:45:9a], tid=0x11aa22bb: no lease for address 198.51.100.40 requested by INIT-REBOOT client",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "198.51.100.40"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:02.004Z",
+    "client": {
+      "ip": "192.0.2.10",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-reused",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_LEASE_REUSE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "lease": {
+        "address": "192.0.2.10",
+        "duration": 3620,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x55e1a0c2"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x55e1a0c2: lease 192.0.2.10 has been reused for 3620 seconds",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.10"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:15:45.330Z",
+    "client": {
+      "ip": "192.0.2.11",
+      "mac": "00-0C-29-7A-11-B2"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-released",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_RELEASE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "end"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "00:0c:29:7a:11:b2",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "192.0.2.11",
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x7f00aa01"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 00:0c:29:7a:11:b2], cid=[no info], tid=0x7f00aa01: address 192.0.2.11 was released properly.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.11"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:20:09.100Z",
+    "client": {
+      "mac": "A4-83-E7-01-02-03"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-declined",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_DECLINE_LEASE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "a4:83:e7:01:02:03",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "192.0.2.12",
+        "duration": 86400,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x0badf00d"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "Received DHCPDECLINE for addr 192.0.2.12 from client [hwtype=1 a4:83:e7:01:02:03], cid=[no info], tid=0x0badf00d. The lease will be unavailable for 86400 seconds.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.12"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:25:31.777Z",
+    "client": {
+      "mac": "F0-18-98-AA-BB-CC"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "allocation-failed",
+      "category": [
+        "network"
+      ],
+      "code": "ALLOC_ENGINE_V4_ALLOC_FAIL_SUBNET",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "f0:18:98:aa:bb:cc",
+        "hwtype": 1
+      },
+      "logger": {
+        "component": "alloc-engine"
+      },
+      "subnet": {
+        "id": 1,
+        "prefix": "192.0.2.0/24"
+      },
+      "transaction_id": "0x2468ace0"
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.alloc-engine"
+    },
+    "message": "[hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: failed to allocate an IPv4 address in the subnet 192.0.2.0/24, subnet-id 1, shared network (none)",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:25:31.778Z",
+    "client": {
+      "mac": "F0-18-98-AA-BB-CC"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "allocation-failed",
+      "category": [
+        "network"
+      ],
+      "code": "ALLOC_ENGINE_V4_ALLOC_FAIL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "allocation": {
+        "attempts": 254
+      },
+      "client": {
+        "hwaddr": "f0:18:98:aa:bb:cc",
+        "hwtype": 1
+      },
+      "logger": {
+        "component": "alloc-engine"
+      },
+      "transaction_id": "0x2468ace0"
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.alloc-engine"
+    },
+    "message": "[hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: failed to allocate an IPv4 address after 254 attempt(s)",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:25:31.779Z",
+    "client": {
+      "mac": "F0-18-98-AA-BB-CC"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "allocation-failed",
+      "category": [
+        "network"
+      ],
+      "code": "ALLOC_ENGINE_V4_ALLOC_FAIL_CLASSES",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "client": {
+        "classes": [
+          "ALL",
+          "KNOWN",
+          "UNKNOWN"
+        ],
+        "hwaddr": "f0:18:98:aa:bb:cc",
+        "hwtype": 1
+      },
+      "logger": {
+        "component": "alloc-engine"
+      },
+      "transaction_id": "0x2468ace0"
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.alloc-engine"
+    },
+    "message": "[hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: Failed to allocate an IPv4 address for client with classes: ALL, KNOWN, UNKNOWN",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:30:00.020Z",
+    "client": {
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "destination": {
+      "ip": "255.255.255.255"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "packet-received",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_PACKET_RECEIVED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "protocol"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "dhcp": {
+        "message_type": "DHCPDISCOVER",
+        "message_type_code": 1
+      },
+      "logger": {
+        "component": "packets"
+      },
+      "transaction_id": "0x6a8c1f20"
+    },
+    "log": {
+      "level": "debug",
+      "logger": "kea-dhcp4.packets"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: DHCPDISCOVER (type 1) received from 0.0.0.0 to 255.255.255.255 on interface eth0",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "observer": {
+      "ingress": {
+        "interface": {
+          "name": "eth0"
+        }
+      }
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "0.0.0.0",
+        "255.255.255.255"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "source": {
+      "ip": "0.0.0.0"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:30:00.022Z",
+    "client": {
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_SUBNET_SELECTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "logger": {
+        "component": "dhcpsrv"
+      },
+      "subnet": {
+        "id": 1
+      },
+      "transaction_id": "0x6a8c1f20"
+    },
+    "log": {
+      "level": "debug",
+      "logger": "kea-dhcp4.dhcpsrv"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: the subnet with ID 1 was selected for client assignments",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:30:00.024Z",
+    "client": {
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "destination": {
+      "ip": "192.0.2.10",
+      "port": 68
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "packet-sent",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_PACKET_SEND",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "protocol"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "dhcp": {
+        "message_type": "DHCPOFFER",
+        "message_type_code": 2
+      },
+      "logger": {
+        "component": "packets"
+      },
+      "transaction_id": "0x6a8c1f20"
+    },
+    "log": {
+      "level": "debug",
+      "logger": "kea-dhcp4.packets"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: trying to send packet DHCPOFFER (type 2) from 192.0.2.1:67 to 192.0.2.10:68 on interface eth0",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "observer": {
+      "egress": {
+        "interface": {
+          "name": "eth0"
+        }
+      }
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.1",
+        "192.0.2.10"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "source": {
+      "ip": "192.0.2.1",
+      "port": 67
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:30:00.025Z",
+    "client": {
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_RESPONSE_DATA",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "logger": {
+        "component": "options"
+      },
+      "transaction_id": "0x6a8c1f20"
+    },
+    "log": {
+      "level": "debug",
+      "logger": "kea-dhcp4.options"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x6a8c1f20: responding with packet DHCPOFFER (type 2), packet details: local_address=192.0.2.1:67, remote_address=192.0.2.10:68, msg_type=DHCPOFFER (2), trans_id=0x6a8c1f20,\noptions:\n  type=001, len=004: 4294967040 (uint32)\n  type=003, len=004: 192.0.2.1\n  type=051, len=004: 4000 (uint32)",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:40:12.500Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCPSRV_MEMFILE_LFC_EXECUTE_FAILED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "error"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcpsrv"
+      }
+    },
+    "log": {
+      "level": "error",
+      "logger": "kea-dhcp4.dhcpsrv"
+    },
+    "message": "execution of the LFC failed: unable to execute /usr/sbin/kea-lfc",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T09:00:00.900Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_state": "READY",
+        "previous_state": "WAITING",
+        "state": "READY"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "server1: server transitions from WAITING to READY state, partner state is READY",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T18:00:00.001Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "server-stopped",
+      "category": [
+        "process"
+      ],
+      "code": "DHCP4_SHUTDOWN",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "end"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "server shutdown",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  }
+]
