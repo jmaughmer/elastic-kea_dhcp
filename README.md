@@ -17,7 +17,7 @@ Elasticsearch ingest pipeline and Kibana dashboard for [ISC Kea](https://www.isc
 | `scripts/demo_data.py` | Generates a day of synthetic Kea logs to preview the dashboard. |
 | `samples/`, `tests/` | Sample Kea logs, golden outputs and the pipeline test. |
 
-Requires Elasticsearch and Kibana 8.12 or newer (tested on 8.15 and 9.1).
+Requires Elasticsearch and Kibana 8.12 or newer (tested on 8.15.3 and 9.1.5).
 
 ## Log format
 
@@ -110,20 +110,28 @@ ES_URL=http://localhost:9200 scripts/demo_data.py     # writes logs-kea.dhcp-dem
 
 ## Development
 
-```sh
-pip install pyyaml
-scripts/build.py                  # regenerate the pipeline JSON after editing the YAML
-scripts/build_dashboard.py        # regenerate the dashboard NDJSON
-ES_URL=http://localhost:9200 tests/test_pipeline.py              # check against tests/expected/
-ES_URL=http://localhost:9200 tests/test_pipeline.py --generate   # accept new output
-```
-
-To try it locally:
+Tests run locally against throwaway Elasticsearch and Kibana containers. On AlmaLinux 10 (including under WSL), install the prerequisites:
 
 ```sh
-docker run -d --name es -p 9200:9200 -e discovery.type=single-node -e xpack.security.enabled=false docker.elastic.co/elasticsearch/elasticsearch:8.15.3
-docker run -d --name kb -p 5601:5601 --link es -e ELASTICSEARCH_HOSTS=http://es:9200 docker.elastic.co/kibana/kibana:8.15.3
-./scripts/install.sh && scripts/demo_data.py
+sudo dnf install -y python3 python3-pyyaml curl
+# plus Docker CE (https://docs.docker.com/engine/install/rhel/) or podman
 ```
 
-CI (GitHub Actions) checks that the generated files are current, runs the sample logs through the pipeline on Elasticsearch 8.15 and 9.1, and imports the dashboard into Kibana 8.15 and 9.1.
+Then run the whole suite:
+
+```sh
+scripts/test-local.sh                       # Elastic Stack 8.15.3
+STACK_VERSION=9.1.5 scripts/test-local.sh   # another version
+scripts/test-local.sh --keep                # leave Kibana up with demo data to look at the dashboard
+DOCKER=podman scripts/test-local.sh         # use podman instead of docker
+```
+
+`test-local.sh` checks that the generated files are current, starts Elasticsearch, runs every sample log through the pipeline and compares the output with `tests/expected/`, indexes the samples to catch mapping errors, then starts Kibana, imports the dashboard, loads demo data and checks that every saved object is present. The containers are removed at the end unless you pass `--keep`. Set `ES_PORT` / `KIBANA_PORT` if 9200 or 5601 are taken.
+
+After changing the sources, regenerate the derived files:
+
+```sh
+scripts/build.py                  # pipeline JSON from the YAML
+scripts/build_dashboard.py        # dashboard NDJSON
+ES_URL=http://localhost:9200 tests/test_pipeline.py --generate   # accept new pipeline output into tests/expected/
+```
