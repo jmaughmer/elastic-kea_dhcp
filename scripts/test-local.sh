@@ -99,6 +99,9 @@ step "Pipeline tests"
 ES_URL="$ES_URL" KIBANA_URL="" ./scripts/install.sh
 ES_URL="$ES_URL" python3 tests/test_pipeline.py
 
+step "Dev Tools install file (Fleet Custom Logs layout)"
+ES_URL="$ES_URL" python3 tests/check_devtools.py
+
 if $KIBANA; then
   step "Dashboard import (Kibana ${STACK_VERSION})"
   wait_for Kibana "curl -fs '${KIBANA_URL}/api/status' | grep -q '\"level\":\"available\"'" 72
