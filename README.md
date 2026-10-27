@@ -116,8 +116,6 @@ Tests run locally against throwaway Elasticsearch and Kibana containers in podma
 sudo dnf install -y podman python3 python3-pyyaml curl
 ```
 
-Rootless podman is fine. The containers only publish ports 9200 and 5601.
-
 Then run the whole suite:
 
 ```sh
