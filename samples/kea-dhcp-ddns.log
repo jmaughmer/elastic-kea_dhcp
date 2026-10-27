@@ -1,0 +1,2 @@
+2026-10-27 08:01:14.010 INFO  [kea-dhcp-ddns.d2-to-dns/1890.140551236548352] DHCP_DDNS_ADD_SUCCEEDED DHCP_DDNS Request ID 000201E1B8E0A3E8B8A7C1F0D2: successfully added the DNS mapping addition for this request: Type: 0 (CHG_ADD)
+2026-10-27 08:01:14.511 ERROR [kea-dhcp-ddns.d2-to-dns/1890.140551236548352] DHCP_DDNS_FORWARD_ADD_IO_ERROR DHCP_DDNS Request ID 000201E1B8E0A3E8B8A7C1F0D3: encountered an IO error sending a forward mapping add for FQDN laptop.example.com. to DNS server 192.0.2.53 port:53

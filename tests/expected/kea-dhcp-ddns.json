@@ -1,0 +1,87 @@
+[
+  {
+    "@timestamp": "2026-10-27T08:01:14.010Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "network"
+      ],
+      "code": "DHCP_DDNS_ADD_SUCCEEDED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "d2-to-dns"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp-ddns.d2-to-dns"
+    },
+    "message": "DHCP_DDNS Request ID 000201E1B8E0A3E8B8A7C1F0D2: successfully added the DNS mapping addition for this request: Type: 0 (CHG_ADD)",
+    "network": {
+      "protocol": "dns"
+    },
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:01:14.511Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "network"
+      ],
+      "code": "DHCP_DDNS_FORWARD_ADD_IO_ERROR",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "error"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "d2-to-dns"
+      }
+    },
+    "log": {
+      "level": "error",
+      "logger": "kea-dhcp-ddns.d2-to-dns"
+    },
+    "message": "DHCP_DDNS Request ID 000201E1B8E0A3E8B8A7C1F0D3: encountered an IO error sending a forward mapping add for FQDN laptop.example.com. to DNS server 192.0.2.53 port:53",
+    "network": {
+      "protocol": "dns"
+    },
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea"
+    }
+  }
+]

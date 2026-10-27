@@ -1,0 +1,34 @@
+{
+  "index_patterns": ["logs-kea.dhcp-*"],
+  "data_stream": {},
+  "priority": 200,
+  "composed_of": [
+    "logs@mappings",
+    "logs@settings",
+    "ecs@mappings",
+    "logs-kea.dhcp@package",
+    "logs-kea.dhcp@custom"
+  ],
+  "ignore_missing_component_templates": ["ecs@mappings", "logs-kea.dhcp@custom"],
+  "template": {
+    "settings": {
+      "index": {
+        "default_pipeline": "logs-kea.dhcp"
+      }
+    },
+    "mappings": {
+      "properties": {
+        "data_stream": {
+          "properties": {
+            "type": { "type": "constant_keyword", "value": "logs" },
+            "dataset": { "type": "constant_keyword", "value": "kea.dhcp" }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Data stream template for Kea DHCP logs (logs-kea.dhcp-<namespace>)",
+    "project": "https://github.com/jmaughmer/elastic-kea_dhcp"
+  }
+}

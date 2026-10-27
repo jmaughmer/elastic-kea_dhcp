@@ -1,0 +1,6 @@
+2026-10-27 08:00:02.410 INFO  [kea-dhcp6.dhcp6/1880.139906214741888] DHCP6_STARTED Kea DHCPv6 server version 3.0.1 started
+2026-10-27 08:03:10.211 INFO  [kea-dhcp6.leases/1880.139906206349056] DHCP6_LEASE_ADVERT duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x9cc3a7: lease for address 2001:db8:1::100 and iaid=1 will be advertised
+2026-10-27 08:03:10.260 INFO  [kea-dhcp6.leases/1880.139906206349056] DHCP6_LEASE_ALLOC duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x9cc3a7: lease for address 2001:db8:1::100 and iaid=1 has been allocated for 7200 seconds
+2026-10-27 08:04:44.913 INFO  [kea-dhcp6.leases/1880.139906206349056] DHCP6_PD_LEASE_ALLOC duid=[00:01:00:01:2c:5e:7a:10:00:0c:29:7a:11:b2], [no hwaddr info], tid=0x1b2c3d: lease for prefix 2001:db8:8:100::/56 and iaid=15 has been allocated for 7200 seconds
+2026-10-27 08:50:03.004 INFO  [kea-dhcp6.leases/1880.139906206349056] DHCP6_RELEASE_NA duid=[00:03:00:01:08:00:2b:02:3f:4e], [hwtype=1 08:00:2b:02:3f:4e], tid=0x44aa01: binding for address 2001:db8:1::100 and iaid=1 was released properly
+2026-10-27 08:55:20.700 WARN  [kea-dhcp6.alloc-engine/1880.139906206349056] ALLOC_ENGINE_V6_ALLOC_FAIL duid=[00:03:00:01:a4:83:e7:01:02:03], [hwtype=1 a4:83:e7:01:02:03], tid=0x77bb12: failed to allocate an IPv6 lease after 65536 attempt(s)

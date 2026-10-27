@@ -1,0 +1,196 @@
+[
+  {
+    "@timestamp": "2026-10-27T13:01:13.601Z",
+    "client": {
+      "ip": "192.0.2.10",
+      "mac": "08-00-2B-02-3F-4E"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-allocated",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_LEASE_ALLOC",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "allowed"
+      ]
+    },
+    "host": {
+      "hostname": "dhcp01"
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "08:00:2b:02:3f:4e",
+        "hwtype": 1,
+        "id": "01:08:00:2b:02:3f:4e"
+      },
+      "lease": {
+        "address": "192.0.2.10",
+        "duration": 4000,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x3d18f5e4"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 08:00:2b:02:3f:4e], cid=[01:08:00:2b:02:3f:4e], tid=0x3d18f5e4: lease 192.0.2.10 has been allocated for 4000 seconds",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "hosts": [
+        "dhcp01"
+      ],
+      "ip": [
+        "192.0.2.10"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:15:45.000Z",
+    "client": {
+      "ip": "192.0.2.11",
+      "mac": "00-0C-29-7A-11-B2"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-released",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_RELEASE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "end"
+      ]
+    },
+    "host": {
+      "hostname": "dhcp01"
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "00:0c:29:7a:11:b2",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "192.0.2.11",
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x7f00aa01"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 00:0c:29:7a:11:b2], cid=[no info], tid=0x7f00aa01: address 192.0.2.11 was released properly.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "hosts": [
+        "dhcp01"
+      ],
+      "ip": [
+        "192.0.2.11"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "client": {
+      "mac": "F0-18-98-AA-BB-CC"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "allocation-failed",
+      "category": [
+        "network"
+      ],
+      "code": "ALLOC_ENGINE_V4_ALLOC_FAIL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "allocation": {
+        "attempts": 254
+      },
+      "client": {
+        "hwaddr": "f0:18:98:aa:bb:cc",
+        "hwtype": 1
+      },
+      "logger": {
+        "component": "alloc-engine"
+      },
+      "transaction_id": "0x2468ace0"
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.alloc-engine"
+    },
+    "message": "[hwtype=1 f0:18:98:aa:bb:cc], cid=[no info], tid=0x2468ace0: failed to allocate an IPv4 address after 254 attempt(s)",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  }
+]
