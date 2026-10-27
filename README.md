@@ -110,12 +110,13 @@ ES_URL=http://localhost:9200 scripts/demo_data.py     # writes logs-kea.dhcp-dem
 
 ## Development
 
-Tests run locally against throwaway Elasticsearch and Kibana containers. On AlmaLinux 10 (including under WSL), install the prerequisites:
+Tests run locally against throwaway Elasticsearch and Kibana containers in podman. On AlmaLinux 10 (including under WSL), install the prerequisites:
 
 ```sh
-sudo dnf install -y python3 python3-pyyaml curl
-# plus Docker CE (https://docs.docker.com/engine/install/rhel/) or podman
+sudo dnf install -y podman python3 python3-pyyaml curl
 ```
+
+Rootless podman is fine. The containers only publish ports 9200 and 5601.
 
 Then run the whole suite:
 
@@ -123,7 +124,6 @@ Then run the whole suite:
 scripts/test-local.sh                       # Elastic Stack 8.15.3
 STACK_VERSION=9.1.5 scripts/test-local.sh   # another version
 scripts/test-local.sh --keep                # leave Kibana up with demo data to look at the dashboard
-DOCKER=podman scripts/test-local.sh         # use podman instead of docker
 ```
 
 `test-local.sh` checks that the generated files are current, starts Elasticsearch, runs every sample log through the pipeline and compares the output with `tests/expected/`, indexes the samples to catch mapping errors, then starts Kibana, imports the dashboard, loads demo data and checks that every saved object is present. The containers are removed at the end unless you pass `--keep`. Set `ES_PORT` / `KIBANA_PORT` if 9200 or 5601 are taken.

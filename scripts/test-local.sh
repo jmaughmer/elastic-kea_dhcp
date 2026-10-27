@@ -11,11 +11,11 @@
 #   STACK_VERSION  Elastic Stack version to test (default 8.15.3; 9.x works too)
 #   ES_PORT        host port for Elasticsearch (default 9200)
 #   KIBANA_PORT    host port for Kibana (default 5601)
-#   DOCKER         container CLI (default docker; podman also works)
+#   CONTAINER_CLI  container engine (default podman)
 #   ES_IMAGE / KIBANA_IMAGE  override the image names (default docker.elastic.co)
 #
 # Host requirements (AlmaLinux 10, including under WSL):
-#   dnf install -y python3 python3-pyyaml curl   # plus Docker CE (or podman)
+#   dnf install -y podman python3 python3-pyyaml curl
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -23,7 +23,7 @@ cd "$(dirname "$0")/.."
 STACK_VERSION="${STACK_VERSION:-8.15.3}"
 ES_PORT="${ES_PORT:-9200}"
 KIBANA_PORT="${KIBANA_PORT:-5601}"
-DOCKER="${DOCKER:-docker}"
+CONTAINER_CLI="${CONTAINER_CLI:-podman}"
 ES_IMAGE="${ES_IMAGE:-docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}}"
 KIBANA_IMAGE="${KIBANA_IMAGE:-docker.elastic.co/kibana/kibana:${STACK_VERSION}}"
 KEEP=false
@@ -42,7 +42,7 @@ KB_NAME=kea-test-kibana
 ES_URL="http://localhost:${ES_PORT}"
 KIBANA_URL="http://localhost:${KIBANA_PORT}"
 
-for cmd in "$DOCKER" curl python3; do
+for cmd in "$CONTAINER_CLI" curl python3; do
   command -v "$cmd" >/dev/null || { echo "missing required command: $cmd" >&2; exit 1; }
 done
 python3 -c 'import yaml' 2>/dev/null || {
@@ -52,8 +52,8 @@ python3 -c 'import yaml' 2>/dev/null || {
 
 cleanup() {
   if ! $KEEP; then
-    "$DOCKER" rm -f "$KB_NAME" "$ES_NAME" >/dev/null 2>&1 || true
-    "$DOCKER" network rm "$NET" >/dev/null 2>&1 || true
+    "$CONTAINER_CLI" rm -f "$KB_NAME" "$ES_NAME" >/dev/null 2>&1 || true
+    "$CONTAINER_CLI" network rm "$NET" >/dev/null 2>&1 || true
   fi
 }
 trap cleanup EXIT
@@ -80,16 +80,16 @@ bash -n scripts/install.sh
 echo "ok"
 
 step "Starting Elasticsearch ${STACK_VERSION}"
-"$DOCKER" rm -f "$KB_NAME" "$ES_NAME" >/dev/null 2>&1 || true
-"$DOCKER" network create "$NET" >/dev/null 2>&1 || true
-"$DOCKER" run -d --name "$ES_NAME" --network "$NET" -p "${ES_PORT}:9200" \
+"$CONTAINER_CLI" rm -f "$KB_NAME" "$ES_NAME" >/dev/null 2>&1 || true
+"$CONTAINER_CLI" network create "$NET" >/dev/null 2>&1 || true
+"$CONTAINER_CLI" run -d --name "$ES_NAME" --network "$NET" -p "${ES_PORT}:9200" \
   -e discovery.type=single-node \
   -e xpack.security.enabled=false \
   -e cluster.routing.allocation.disk.threshold_enabled=false \
   -e ES_JAVA_OPTS="-Xms1g -Xmx1g" \
   "$ES_IMAGE" >/dev/null
 if $KIBANA; then
-  "$DOCKER" run -d --name "$KB_NAME" --network "$NET" -p "${KIBANA_PORT}:5601" \
+  "$CONTAINER_CLI" run -d --name "$KB_NAME" --network "$NET" -p "${KIBANA_PORT}:5601" \
     -e ELASTICSEARCH_HOSTS="http://${ES_NAME}:9200" \
     "$KIBANA_IMAGE" >/dev/null
 fi
@@ -110,5 +110,5 @@ fi
 step "All tests passed"
 if $KEEP && $KIBANA; then
   echo "Containers left running. Dashboard: ${KIBANA_URL}/app/dashboards#/view/kea-dhcp-overview"
-  echo "Remove with: $DOCKER rm -f $KB_NAME $ES_NAME && $DOCKER network rm $NET"
+  echo "Remove with: $CONTAINER_CLI rm -f $KB_NAME $ES_NAME && $CONTAINER_CLI network rm $NET"
 fi
