@@ -129,12 +129,24 @@ sudo dnf install -y podman python3 python3-pyyaml curl
 Then run the whole suite:
 
 ```sh
-scripts/test-local.sh                       # Elastic Stack 8.15.3
-STACK_VERSION=9.1.5 scripts/test-local.sh   # another version
-scripts/test-local.sh --keep                # leave Kibana up with demo data to look at the dashboard
+scripts/test.sh                       # Elastic Stack 8.15.3
+STACK_VERSION=9.1.5 scripts/test.sh   # another version
+scripts/test.sh --keep                # leave Kibana up with demo data to look at the dashboard
 ```
 
-`test-local.sh` checks that the generated files are current, starts Elasticsearch, runs every sample log through the pipeline and compares the output with `tests/expected/`, indexes the samples to catch mapping errors, sends the Dev Tools file's requests and indexes the samples the way the Fleet integration does, then starts Kibana, imports the dashboard, loads demo data and checks that every saved object is present. The containers are removed at the end unless you pass `--keep`. Set `ES_PORT` / `KIBANA_PORT` if 9200 or 5601 are taken.
+`test.sh` checks that the generated files are current, starts Elasticsearch, runs every sample log through the pipeline and compares the output with `tests/expected/`, indexes the samples to catch mapping errors, sends the Dev Tools file's requests and indexes the samples the way the Fleet integration does, then starts Kibana, imports the dashboard, loads demo data and checks that every saved object is present. The containers are removed at the end unless you pass `--keep`. Set `ES_PORT` / `KIBANA_PORT` if 9200 or 5601 are taken.
+
+### One-time AlmaLinux 10 WSL setup
+
+The Elasticsearch and Kibana containers run under rootless podman. Set it up once for your user:
+
+```sh
+grep -q "^$USER:" /etc/subuid || sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$USER"
+podman system migrate
+podman info
+```
+
+Clone the repository under your Linux home directory (for example `~/src/`), not under `/mnt/c`. `scripts/test.sh` checks for the subordinate IDs and a working podman before it starts. Run it with `sudo` to use rootful podman instead.
 
 After changing the sources, regenerate the derived files:
 
