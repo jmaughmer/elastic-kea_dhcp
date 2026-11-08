@@ -12,7 +12,7 @@ PUT _ingest/pipeline/logs-kea.dhcp
   "description": "Parse ISC Kea DHCP server logs into ECS fields",
   "_meta": {
     "project": "https://github.com/jmaughmer/elastic-kea_dhcp",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "processors": [
     {
@@ -127,10 +127,20 @@ PUT _ingest/pipeline/logs-kea.dhcp
     {
       "script": {
         "tag": "script_service",
-        "description": "Derive the Kea service and IP family from the process name.",
+        "description": "Derive the Kea service from the process name, and the protocol and IP family for DHCP and DNS activity. API, command, HA and hook management messages are not DHCP traffic, so they get no network fields.",
         "lang": "painless",
         "if": "ctx.process?.name != null",
-        "source": "String p = ctx.process.name;\nctx.service = ctx.service ?: new HashMap();\nctx.service.type = 'kea';\nctx.service.name = p;\nctx.network = ctx.network ?: new HashMap();\nif (p == 'kea-dhcp4') {\n  ctx.network.protocol = 'dhcp';\n  ctx.network.type = 'ipv4';\n} else if (p == 'kea-dhcp6') {\n  ctx.network.protocol = 'dhcpv6';\n  ctx.network.type = 'ipv6';\n} else if (p == 'kea-dhcp-ddns') {\n  ctx.network.protocol = 'dns';\n}\nif (ctx.network.isEmpty()) {\n  ctx.remove('network');\n}\n"
+        "params": {
+          "non_traffic_components": [
+            "auth",
+            "http",
+            "commands",
+            "ha-hooks",
+            "hooks",
+            "dctl"
+          ]
+        },
+        "source": "String p = ctx.process.name;\nctx.service = ctx.service ?: new HashMap();\nctx.service.type = 'kea';\nctx.service.name = p;\nString c = ctx.kea?.logger?.component;\nif (c != null && (params.non_traffic_components.contains(c) || c.endsWith('-cmds-hooks'))) {\n  return;\n}\nctx.network = ctx.network ?: new HashMap();\nif (p == 'kea-dhcp4') {\n  ctx.network.protocol = 'dhcp';\n  ctx.network.type = 'ipv4';\n} else if (p == 'kea-dhcp6') {\n  ctx.network.protocol = 'dhcpv6';\n  ctx.network.type = 'ipv6';\n} else if (p == 'kea-dhcp-ddns') {\n  ctx.network.protocol = 'dns';\n}\nif (ctx.network.isEmpty()) {\n  ctx.remove('network');\n}\n"
       }
     },
     {
@@ -244,7 +254,7 @@ PUT _ingest/pipeline/logs-kea.dhcp
         "field": "message",
         "patterns": [
           "server version %{NOTSPACE:service.version}",
-          "version %{NOTSPACE:service.version}"
+          "version:? %{NOTSPACE:service.version}"
         ],
         "if": "ctx.event?.code instanceof String && (ctx.event.code.endsWith('_STARTING') || ctx.event.code.endsWith('_STARTED'))",
         "ignore_failure": true
@@ -257,7 +267,49 @@ PUT _ingest/pipeline/logs-kea.dhcp
         "patterns": [
           "transitions from %{NOTSPACE:kea.ha.previous_state} to %{NOTSPACE:kea.ha.state} state(?:, partner state is %{NOTSPACE:kea.ha.partner_state})?"
         ],
-        "if": "ctx.event?.code == 'HA_STATE_TRANSITION'",
+        "if": "ctx.event?.code instanceof String && ctx.event.code.startsWith('HA_STATE_TRANSITION')",
+        "ignore_failure": true
+      }
+    },
+    {
+      "grok": {
+        "tag": "grok_ha_names",
+        "field": "message",
+        "pattern_definitions": {
+          "KEA_HA_NAME": "[^\\s:()]+"
+        },
+        "patterns": [
+          "^local DHCP service is (?:enabled|disabled) while the %{KEA_HA_NAME:kea.ha.server_name} is in the %{NOTSPACE:kea.ha.state} state",
+          "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: (?:.*? )?(?:with|to|from|by) %{KEA_HA_NAME:kea.ha.partner_name} \\(%{URI:kea.ha.partner_url}\\)",
+          "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: communication with %{KEA_HA_NAME:kea.ha.partner_name} is interrupted",
+          "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: "
+        ],
+        "if": "ctx.event?.code instanceof String && ctx.event.code.startsWith('HA_')",
+        "ignore_failure": true
+      }
+    },
+    {
+      "grok": {
+        "tag": "grok_command",
+        "field": "message",
+        "patterns": [
+          "[Rr]eceived command '%{DATA:kea.command}'",
+          "rejected command '%{DATA:kea.command}'"
+        ],
+        "if": "ctx.event?.code == 'COMMAND_RECEIVED' || ctx.event?.code == 'COMMAND_HTTP_LISTENER_COMMAND_REJECTED'",
+        "ignore_failure": true
+      }
+    },
+    {
+      "grok": {
+        "tag": "grok_api",
+        "field": "message",
+        "patterns": [
+          "authorized for '%{DATA:user.name}'",
+          "TLS handshake with \\[?%{IP:source.ip}\\]?(?::%{POSINT:source.port:long})? failed with %{GREEDYDATA:event.reason}",
+          "malformed authentication header: %{GREEDYDATA:event.reason}"
+        ],
+        "if": "ctx.event?.code instanceof String && ctx.event.code.startsWith('HTTP_')",
         "ignore_failure": true
       }
     },
@@ -358,6 +410,12 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "denied",
               "failure"
             ],
+            "DHCP4_SERVER_INITIATED_DECLINE": [
+              "lease-declined",
+              "network",
+              "denied",
+              "failure"
+            ],
             "DHCP4_INIT_REBOOT": [
               "init-reboot",
               "network",
@@ -430,6 +488,18 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "start",
               "success"
             ],
+            "DHCP_DDNS_STARTED": [
+              "server-started",
+              "process",
+              "start",
+              "success"
+            ],
+            "CTRL_AGENT_STARTED": [
+              "server-started",
+              "process",
+              "start",
+              "success"
+            ],
             "DHCP4_SHUTDOWN": [
               "server-stopped",
               "process",
@@ -437,6 +507,12 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "success"
             ],
             "DHCP6_SHUTDOWN": [
+              "server-stopped",
+              "process",
+              "end",
+              "success"
+            ],
+            "DCTL_SHUTDOWN": [
               "server-stopped",
               "process",
               "end",
@@ -454,6 +530,30 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "change",
               "success"
             ],
+            "DCTL_CONFIG_COMPLETE": [
+              "config-applied",
+              "configuration",
+              "change",
+              "success"
+            ],
+            "DHCP4_DYNAMIC_RECONFIGURATION": [
+              "config-reload-requested",
+              "configuration",
+              "change",
+              ""
+            ],
+            "DHCP6_DYNAMIC_RECONFIGURATION": [
+              "config-reload-requested",
+              "configuration",
+              "change",
+              ""
+            ],
+            "DCTL_CFG_FILE_RELOAD_SIGNAL_RECVD": [
+              "config-reload-requested",
+              "configuration",
+              "change",
+              ""
+            ],
             "DHCP4_CONFIG_LOAD_FAIL": [
               "config-failed",
               "configuration",
@@ -466,11 +566,185 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "error",
               "failure"
             ],
+            "DHCP4_DYNAMIC_RECONFIGURATION_FAIL": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "DHCP6_DYNAMIC_RECONFIGURATION_FAIL": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "DHCP4_CONFIG_UNRECOVERABLE_ERROR": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "DHCP6_CONFIG_UNRECOVERABLE_ERROR": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "DCTL_CFG_FILE_RELOAD_ERROR": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "DCTL_CONFIG_FILE_LOAD_FAIL": [
+              "config-failed",
+              "configuration",
+              "error",
+              "failure"
+            ],
+            "COMMAND_RECEIVED": [
+              "command-received",
+              "process",
+              "info",
+              ""
+            ],
+            "COMMAND_HTTP_LISTENER_COMMAND_REJECTED": [
+              "api-command-rejected",
+              "network",
+              "denied",
+              "failure"
+            ],
+            "HTTP_CLIENT_REQUEST_AUTHORIZED": [
+              "api-auth-succeeded",
+              "authentication",
+              "start",
+              "success"
+            ],
+            "HTTP_CLIENT_REQUEST_NOT_AUTHORIZED": [
+              "api-auth-failed",
+              "authentication",
+              "start",
+              "failure"
+            ],
+            "HTTP_CLIENT_REQUEST_NO_AUTH_HEADER": [
+              "api-auth-failed",
+              "authentication",
+              "start",
+              "failure"
+            ],
+            "HTTP_CLIENT_REQUEST_BAD_AUTH_HEADER": [
+              "api-auth-failed",
+              "authentication",
+              "start",
+              "failure"
+            ],
+            "HTTP_CONNECTION_HANDSHAKE_FAILED": [
+              "tls-handshake-failed",
+              "network",
+              "connection",
+              "failure"
+            ],
             "HA_STATE_TRANSITION": [
               "ha-state-changed",
               "configuration",
               "change",
               ""
+            ],
+            "HA_STATE_TRANSITION_PASSIVE_BACKUP": [
+              "ha-state-changed",
+              "configuration",
+              "change",
+              ""
+            ],
+            "HA_SERVICE_STARTED": [
+              "ha-service-started",
+              "process",
+              "start",
+              "success"
+            ],
+            "HA_COMMUNICATION_INTERRUPTED": [
+              "ha-communication-interrupted",
+              "network",
+              "connection",
+              "failure"
+            ],
+            "HA_HEARTBEAT_COMMUNICATIONS_FAILED": [
+              "ha-heartbeat-failed",
+              "network",
+              "connection",
+              "failure"
+            ],
+            "HA_HEARTBEAT_FAILED": [
+              "ha-heartbeat-failed",
+              "network",
+              "connection",
+              "failure"
+            ],
+            "HA_SYNC_SUCCESSFUL": [
+              "ha-sync-completed",
+              "database",
+              "change",
+              "success"
+            ],
+            "HA_SYNC_FAILED": [
+              "ha-sync-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_LEASES_SYNC_FAILED": [
+              "ha-sync-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_LEASES_SYNC_COMMUNICATIONS_FAILED": [
+              "ha-sync-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_LEASE_SYNC_FAILED": [
+              "ha-sync-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_LEASES_BACKLOG_FAILED": [
+              "ha-lease-update-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_LEASES_BACKLOG_COMMUNICATIONS_FAILED": [
+              "ha-lease-update-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_TERMINATED": [
+              "ha-terminated",
+              "process",
+              "end",
+              "failure"
+            ],
+            "HA_TERMINATED_PARTNER_DID_NOT_RESTART": [
+              "ha-terminated",
+              "process",
+              "end",
+              "failure"
+            ],
+            "HA_HIGH_CLOCK_SKEW_CAUSED_TERMINATION": [
+              "ha-terminated",
+              "process",
+              "end",
+              "failure"
+            ],
+            "HA_LEASE_UPDATE_REJECTS_CAUSED_TERMINATION": [
+              "ha-terminated",
+              "process",
+              "end",
+              "failure"
             ]
           },
           "prefix": {
@@ -503,10 +777,36 @@ PUT _ingest/pipeline/logs-kea.dhcp
               "network",
               "denied",
               "failure"
+            ],
+            "HA_LEASE_UPDATE_": [
+              "ha-lease-update-failed",
+              "database",
+              "error",
+              "failure"
+            ],
+            "HA_INVALID_PARTNER_STATE_": [
+              "ha-invalid-partner-state",
+              "process",
+              "error",
+              "failure"
             ]
+          },
+          "reasons": {
+            "DHCP4_DECLINE_LEASE": "client reported the address in use",
+            "DHCP6_DECLINE_LEASE": "client reported the address in use",
+            "DHCP4_SERVER_INITIATED_DECLINE": "server found the address in use (ping check)"
           }
         },
-        "source": "ctx.event = ctx.event ?: new HashMap();\nctx.event.kind = 'event';\nctx.event.module = 'kea';\nctx.event.dataset = ctx.event.dataset ?: 'kea.dhcp';\nString code = ctx.event.code;\nList m = null;\nif (code != null) {\n  m = params.exact.get(code);\n  if (m == null) {\n    for (def e : params.prefix.entrySet()) {\n      if (code.startsWith(e.getKey())) {\n        m = e.getValue();\n        break;\n      }\n    }\n  }\n}\nString level = ctx.log?.level;\nboolean isError = level == 'error' || level == 'fatal';\nif (m != null) {\n  ctx.event.action = m[0];\n  ctx.event.category = [m[1]];\n  ctx.event.type = [m[2]];\n  if (m[3] != '') {\n    ctx.event.outcome = m[3];\n  }\n  if (isError && !ctx.event.type.contains('error')) {\n    ctx.event.type.add('error');\n  }\n} else {\n  boolean net = ctx.kea?.client != null || ctx.process?.name == 'kea-dhcp-ddns';\n  ctx.event.category = [net ? 'network' : 'process'];\n  ctx.event.type = [isError ? 'error' : 'info'];\n}\nif (isError && ctx.event.outcome == null) {\n  ctx.event.outcome = 'failure';\n}\n"
+        "source": "ctx.event = ctx.event ?: new HashMap();\nctx.event.kind = 'event';\nctx.event.module = 'kea';\nctx.event.dataset = ctx.event.dataset ?: 'kea.dhcp';\nString code = ctx.event.code;\nList m = null;\nif (code != null) {\n  m = params.exact.get(code);\n  if (m == null) {\n    for (def e : params.prefix.entrySet()) {\n      if (code.startsWith(e.getKey())) {\n        m = e.getValue();\n        break;\n      }\n    }\n  }\n}\nString level = ctx.log?.level;\nboolean isError = level == 'error' || level == 'fatal';\nif (m != null) {\n  ctx.event.action = m[0];\n  ctx.event.category = [m[1]];\n  ctx.event.type = [m[2]];\n  if (m[3] != '') {\n    ctx.event.outcome = m[3];\n  }\n  if (isError && !ctx.event.type.contains('error')) {\n    ctx.event.type.add('error');\n  }\n} else {\n  boolean net = ctx.kea?.client != null || ctx.process?.name == 'kea-dhcp-ddns';\n  ctx.event.category = [net ? 'network' : 'process'];\n  ctx.event.type = [isError ? 'error' : 'info'];\n}\nif (isError && ctx.event.outcome == null) {\n  ctx.event.outcome = 'failure';\n}\nif (code != null && ctx.event.reason == null && params.reasons.containsKey(code)) {\n  ctx.event.reason = params.reasons.get(code);\n}\nif (code != null && code.startsWith('HTTP_')) {\n  ctx.network = ctx.network ?: new HashMap();\n  ctx.network.protocol = 'http';\n}\n"
+      }
+    },
+    {
+      "append": {
+        "tag": "append_expected_warning",
+        "field": "tags",
+        "value": "kea_expected_warning",
+        "allow_duplicates": false,
+        "if": "['DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED', 'DHCP6_RESERVATIONS_LOOKUP_FIRST_ENABLED', 'DHCPSRV_MT_DISABLED_QUEUE_CONTROL'].contains(ctx.event?.code)"
       }
     },
     {
@@ -559,6 +859,15 @@ PUT _ingest/pipeline/logs-kea.dhcp
         "value": "{{{host.hostname}}}",
         "allow_duplicates": false,
         "if": "ctx.host?.hostname != null"
+      }
+    },
+    {
+      "append": {
+        "tag": "append_related_user",
+        "field": "related.user",
+        "value": "{{{user.name}}}",
+        "allow_duplicates": false,
+        "if": "ctx.user?.name != null"
       }
     },
     {
@@ -672,6 +981,10 @@ PUT _component_template/logs-kea.dhcp@custom
               "doc_values": false
             },
             "outcome": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "reason": {
               "type": "keyword",
               "ignore_above": 1024
             },
@@ -822,12 +1135,24 @@ PUT _component_template/logs-kea.dhcp@custom
             }
           }
         },
+        "user": {
+          "properties": {
+            "name": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
         "related": {
           "properties": {
             "ip": {
               "type": "ip"
             },
             "hosts": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "user": {
               "type": "keyword",
               "ignore_above": 1024
             }
@@ -844,6 +1169,10 @@ PUT _component_template/logs-kea.dhcp@custom
               }
             },
             "transaction_id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "command": {
               "type": "keyword",
               "ignore_above": 1024
             },
@@ -929,11 +1258,23 @@ PUT _component_template/logs-kea.dhcp@custom
             },
             "ha": {
               "properties": {
+                "partner_name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
                 "partner_state": {
                   "type": "keyword",
                   "ignore_above": 1024
                 },
+                "partner_url": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
                 "previous_state": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "server_name": {
                   "type": "keyword",
                   "ignore_above": 1024
                 },

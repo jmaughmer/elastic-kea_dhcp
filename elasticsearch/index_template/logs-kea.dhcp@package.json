@@ -18,6 +18,7 @@
             "module": { "type": "constant_keyword", "value": "kea" },
             "original": { "type": "keyword", "index": false, "doc_values": false },
             "outcome": { "type": "keyword", "ignore_above": 1024 },
+            "reason": { "type": "keyword", "ignore_above": 1024 },
             "timezone": { "type": "keyword", "ignore_above": 1024 },
             "type": { "type": "keyword", "ignore_above": 1024 }
           }
@@ -79,16 +80,23 @@
             "egress": { "properties": { "interface": { "properties": { "name": { "type": "keyword", "ignore_above": 1024 } } } } }
           }
         },
+        "user": {
+          "properties": {
+            "name": { "type": "keyword", "ignore_above": 1024 }
+          }
+        },
         "related": {
           "properties": {
             "ip": { "type": "ip" },
-            "hosts": { "type": "keyword", "ignore_above": 1024 }
+            "hosts": { "type": "keyword", "ignore_above": 1024 },
+            "user": { "type": "keyword", "ignore_above": 1024 }
           }
         },
         "kea": {
           "properties": {
             "logger": { "properties": { "component": { "type": "keyword", "ignore_above": 1024 } } },
             "transaction_id": { "type": "keyword", "ignore_above": 1024 },
+            "command": { "type": "keyword", "ignore_above": 1024 },
             "client": {
               "properties": {
                 "classes": { "type": "keyword", "ignore_above": 1024 },
@@ -123,8 +131,11 @@
             },
             "ha": {
               "properties": {
+                "partner_name": { "type": "keyword", "ignore_above": 1024 },
                 "partner_state": { "type": "keyword", "ignore_above": 1024 },
+                "partner_url": { "type": "keyword", "ignore_above": 1024 },
                 "previous_state": { "type": "keyword", "ignore_above": 1024 },
+                "server_name": { "type": "keyword", "ignore_above": 1024 },
                 "state": { "type": "keyword", "ignore_above": 1024 }
               }
             }

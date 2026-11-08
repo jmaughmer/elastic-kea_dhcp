@@ -19,7 +19,7 @@ Elasticsearch ingest pipeline and Kibana dashboard for [ISC Kea](https://www.isc
 | `scripts/demo_data.py` | Generates a day of synthetic Kea logs to preview the dashboard. |
 | `samples/`, `tests/` | Sample Kea logs, golden outputs and the pipeline test. |
 
-Requires Elasticsearch and Kibana 8.12 or newer (tested on 8.15.3 and 9.1.5).
+Requires Elasticsearch and Kibana 8.12 or newer (tested on 8.15.3, 8.19.24 and 9.1.5).
 
 ## Log format
 
@@ -38,6 +38,24 @@ The older layout without a thread id (`[%c/%i]`) and syslog lines that still car
 Multi-line debug output (`DHCP4_QUERY_DATA`, `DHCP4_RESPONSE_DATA` and similar packet dumps) is kept as one event when the shipper joins continuation lines, as the Filebeat example does.
 
 Kea writes timestamps in local time with no offset. Set `event.timezone` (Filebeat's `add_locale` processor does this) or the pipeline assumes UTC.
+
+### Log files
+
+Read every `/var/log/kea/kea-*.log*` file, as the Filebeat example and the [Fleet guide](docs/manual-install.md) do:
+
+- `kea-dhcp4.log`, `kea-dhcp6.log` and `kea-dhcp-ddns.log`.
+- `kea-ctrl-agent.log`, on Kea releases older than 2.7.2. From 2.7.2 the daemons serve the control API themselves, so API access, TLS and command messages appear in the daemon logs.
+- The files of child loggers. A child logger given its own output, such as `kea-dhcp4.leases` sent to `kea-dhcp4-leases.log`, writes only to that file. Its events are not in `kea-dhcp4.log`.
+
+Skip the empty `.lock` files Kea 3 keeps next to each log. Kea's forensic (legal) log files end in `.txt` and are not Kea log lines.
+
+Kea servers set up with [ansible-role-kea_dhcp](https://github.com/jmaughmer/ansible-role-kea_dhcp) work as they are. It writes these files with the default layout unless you set `kea_log_pattern`, and its `kea_*_extra_loggers` create the child-logger files described above. The pipeline was checked against Kea 3.0.5 logs from that role's test scenarios:
+
+- the API in the daemons, with and without TLS
+- HA hot-standby and passive-backup over TLS
+- MySQL lease and host databases
+- the phpIPAM reservation sync
+- configuration reloads
 
 ## Install
 
@@ -69,7 +87,7 @@ Site-specific processing can go in an optional `logs-kea.dhcp@custom` pipeline, 
 
 ### Shipping with Filebeat
 
-Use [`filebeat/filebeat.yml`](filebeat/filebeat.yml). It reads the kea-dhcp4, kea-dhcp6, kea-dhcp-ddns and kea-ctrl-agent logs in `/var/log/kea/` (including Kea's own rotated `.1`, `.2` files), joins multi-line events, adds `event.timezone`, and writes to the `logs-kea.dhcp-default` data stream.
+Use [`filebeat/filebeat.yml`](filebeat/filebeat.yml). It reads every `kea-*.log` file in `/var/log/kea/` (see [Log files](#log-files)), including Kea's own rotated `.1`, `.2` files. It joins multi-line events, adds `event.timezone`, and writes to the `logs-kea.dhcp-default` data stream.
 
 ### Shipping with Elastic Agent
 
@@ -77,7 +95,9 @@ See [docs/manual-install.md](docs/manual-install.md) for the Custom Logs integra
 
 ## Fields
 
-Standard ECS fields are filled where they apply: `@timestamp`, `log.level`, `log.logger`, `process.name`/`pid`/`thread.id`, `service.name`/`version`, `event.code` (the Kea message ID), `event.action`, `event.category`, `event.type`, `event.outcome`, `client.mac` (ECS form, `08-00-2B-02-3F-4E`), `client.ip`, `source.*`, `destination.*`, `observer.ingress/egress.interface.name`, `network.protocol`, `related.ip`.
+Standard ECS fields are filled where they apply: `@timestamp`, `log.level`, `log.logger`, `process.name`/`pid`/`thread.id`, `service.name`/`version`, `event.code` (the Kea message ID), `event.action`, `event.category`, `event.type`, `event.outcome`, `event.reason`, `client.mac` (ECS form, `08-00-2B-02-3F-4E`), `client.ip`, `source.*`, `destination.*`, `observer.ingress/egress.interface.name`, `network.protocol`, `user.name` (the API user), `related.ip`, `related.user`.
+
+`network.protocol` is `dhcp`, `dhcpv6` or `dns` for the activity of the DHCP and DDNS servers, and `http` for control API requests. Command, HA and hook-management messages have no network fields.
 
 Kea-specific fields live under `kea.*`:
 
@@ -91,23 +111,45 @@ Kea-specific fields live under `kea.*`:
 | `kea.allocation.attempts`, `kea.client.classes` | `254`, `["ALL","KNOWN"]` |
 | `kea.dhcp.message_type`, `kea.dhcp.message_type_code` | `DHCPDISCOVER`, `1` |
 | `kea.ha.state`, `kea.ha.previous_state`, `kea.ha.partner_state` | `READY` |
+| `kea.ha.server_name`, `kea.ha.partner_name`, `kea.ha.partner_url` | `dhcp01`, `dhcp02`, `https://192.0.2.3:8001/` |
+| `kea.command` | `config-get`, `reservation-add`, `ha-heartbeat` |
 | `kea.logger.component` | `leases`, `alloc-engine`, `ha-hooks` |
 
-`event.action` values: `lease-allocated`, `lease-reused`, `lease-offered`, `lease-released`, `lease-declined`, `lease-not-found`, `lease-reclaimed`, `init-reboot`, `allocation-failed`, `packet-received`, `packet-sent`, `packet-nak`, `packet-dropped`, `subnet-selection-failed`, `server-started`, `server-stopped`, `config-applied`, `config-failed`, `ha-state-changed`. Message IDs without a mapping still get `event.code`, `event.category` and `event.type`.
+`event.action` values:
+
+| Area | Values |
+| --- | --- |
+| Leases | `lease-allocated`, `lease-reused`, `lease-offered`, `lease-released`, `lease-declined`, `lease-not-found`, `lease-reclaimed`, `init-reboot`, `allocation-failed` |
+| Packets | `packet-received`, `packet-sent`, `packet-nak`, `packet-dropped`, `subnet-selection-failed` |
+| Server | `server-started`, `server-stopped`, `config-applied`, `config-reload-requested`, `config-failed` |
+| Control API | `command-received`, `api-auth-succeeded`, `api-auth-failed`, `tls-handshake-failed`, `api-command-rejected` |
+| HA | `ha-state-changed`, `ha-service-started`, `ha-communication-interrupted`, `ha-heartbeat-failed`, `ha-lease-update-failed`, `ha-sync-completed`, `ha-sync-failed`, `ha-invalid-partner-state`, `ha-terminated` |
+
+Message IDs without a mapping still get `event.code`, `event.category` and `event.type`.
+
+Some actions need a note:
+
+- **`lease-declined`** covers a client's DHCPDECLINE and the addresses Kea's ping check finds in use (`DHCP4_SERVER_INITIATED_DECLINE`). `event.reason` says which.
+- **`config-reload-requested`** is a SIGHUP or `config-reload` command, for example `systemctl reload kea-dhcp4`. The reload either ends in `config-applied` or in `config-failed`, and a failed reload leaves the previous configuration running. `systemctl reload` reports success either way.
+- **The API events** (`api-auth-failed`, `tls-handshake-failed`) are logged by Kea at INFO. Kea doesn't log the client's address with a failed password; a failed TLS handshake has it in `source.ip`.
 
 Unparseable lines keep `event.original`, get `event.kind: pipeline_error` and the tag `kea_parse_failure`. Add the tag `preserve_original_event` at the shipper to keep `event.original` on every document.
+
+Kea logs `DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED`, `DHCP6_RESERVATIONS_LOOKUP_FIRST_ENABLED` and `DHCPSRV_MT_DISABLED_QUEUE_CONTROL` as warnings at every start and reload when multi-threading is on, which is the default. They need no action, so the pipeline tags them `kea_expected_warning`, and the dashboard leaves them out of its errors and warnings.
 
 ## Dashboard
 
 **[Kea DHCP] Overview** (default range: last 24 hours) shows:
 
-- **Tiles:** leases allocated, active clients (distinct MACs), releases, declines, allocation failures, errors and warnings
+- **Tiles:** leases allocated, active clients (distinct MACs), releases, declines (client or ping check), allocation failures, errors and warnings
 - **Lease activity over time** by action, and **log severity** share
 - **Allocation failures over time** by service (kea-dhcp4 / kea-dhcp6), which usually means a full pool or a client class with no matching pool
 - **Log volume by server**, useful for spotting one half of an HA pair going quiet
 - **Top clients** with lease count, distinct addresses and last seen
-- **Top Kea message IDs**
-- **Clients failing allocation** and **declined addresses**, which point at pool exhaustion and IP conflicts
+- **Top Kea message IDs**, without HA heartbeats
+- **Clients failing allocation** and **declined addresses** (with who found each one), which point at pool exhaustion and IP conflicts
+- **HA state by server** (latest state and partner state) and **HA problems over time** (failed heartbeats, lease updates and syncs, lost contact, terminated HA)
+- **API access failures** (wrong or missing credentials, TLS clients without a valid certificate), **API commands** received, and **configuration loads and reloads**, including failed ones
 - **Errors and warnings** log table
 
 Most lease panels work at Kea's default INFO severity. `kea.dhcp.message_type` and the packet fields only appear when the `kea-dhcp4.packets` / `kea-dhcp6.packets` loggers run at DEBUG.

@@ -1,0 +1,19 @@
+2026-10-27 07:59:58.120 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_SERVICE_STARTED dhcp01: started high availability service in hot-standby mode as primary server
+2026-10-27 07:59:58.121 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_LOCAL_DHCP_DISABLE local DHCP service is disabled while the dhcp01 is in the WAITING state
+2026-10-27 08:00:01.952 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_STATE_TRANSITION dhcp01: server transitions from WAITING to SYNCING state, partner state is WAITING
+2026-10-27 08:00:01.952 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_SYNC_START dhcp01: starting lease database synchronization with dhcp02 (https://192.0.2.3:8001/)
+2026-10-27 08:00:01.956 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_LEASES_SYNC_LEASE_PAGE_RECEIVED dhcp01: received 0 leases from dhcp02 (https://192.0.2.3:8001/)
+2026-10-27 08:00:01.956 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_SYNC_SUCCESSFUL dhcp01: lease database synchronization with dhcp02 (https://192.0.2.3:8001/) completed successfully in 4.372 ms
+2026-10-27 08:00:01.957 INFO  [kea-dhcp4.ha-hooks/1873.140226115839872] HA_STATE_TRANSITION dhcp01: server transitions from SYNCING to READY state, partner state is WAITING
+2026-10-27 08:00:04.951 INFO  [kea-dhcp4.ha-hooks/1873.140226107447040] HA_STATE_TRANSITION dhcp01: server transitions from READY to HOT-STANDBY state, partner state is READY
+2026-10-27 08:00:04.951 INFO  [kea-dhcp4.ha-hooks/1873.140226107447040] HA_LOCAL_DHCP_ENABLE local DHCP service is enabled while the dhcp01 is in the HOT-STANDBY state
+2026-10-27 08:00:04.951 INFO  [kea-dhcp4.ha-hooks/1873.140226107447040] HA_LEASE_UPDATES_ENABLED dhcp01: lease updates will be sent to the partner while in HOT-STANDBY state
+2026-10-27 08:00:05.238 INFO  [kea-dhcp4.commands/1911.139871203383872] COMMAND_RECEIVED Received command 'ha-heartbeat'
+2026-10-27 08:03:02.123 WARN  [kea-dhcp4.ha-hooks/1911.139871186598464] HA_HEARTBEAT_COMMUNICATIONS_FAILED dhcp02: failed to send heartbeat to dhcp01 (https://192.0.2.2:8001/): Connection refused
+2026-10-27 08:03:06.821 WARN  [kea-dhcp4.ha-hooks/1911.139871211776576] HA_COMMUNICATION_INTERRUPTED dhcp02: communication with dhcp01 is interrupted
+2026-10-27 08:03:06.821 INFO  [kea-dhcp4.ha-hooks/1911.139871211776576] HA_STATE_TRANSITION dhcp02: server transitions from HOT-STANDBY to PARTNER-DOWN state, partner state is UNDEFINED
+2026-10-27 08:03:06.821 INFO  [kea-dhcp4.ha-hooks/1911.139871211776576] HA_LEASE_UPDATES_DISABLED dhcp02: lease updates will not be sent to the partner while in PARTNER-DOWN state
+2026-10-27 08:20:00.004 ERROR [kea-dhcp4.ha-hooks/1911.139871211776576] HA_TERMINATED HA dhcp02: service terminated due to an unrecoverable condition. Check previous error message(s), address the problem and restart!
+2026-10-27 09:12:43.685 INFO  [kea-dhcp4.ha-hooks/2210.136113866852224] HA_SERVICE_STARTED dhcp03: started high availability service in passive-backup mode as primary server
+2026-10-27 09:12:43.685 INFO  [kea-dhcp4.ha-hooks/2210.136113866852224] HA_STATE_TRANSITION_PASSIVE_BACKUP dhcp03: server transitions from WAITING to PASSIVE-BACKUP state
+2026-10-27 09:12:43.685 INFO  [kea-dhcp4.ha-hooks/2210.136113866852224] HA_LOCAL_DHCP_ENABLE local DHCP service is enabled while the dhcp03 is in the PASSIVE-BACKUP state

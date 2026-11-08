@@ -1,0 +1,847 @@
+[
+  {
+    "@timestamp": "2026-10-27T07:59:58.120Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-service-started",
+      "category": [
+        "process"
+      ],
+      "code": "HA_SERVICE_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp01"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: started high availability service in hot-standby mode as primary server",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T07:59:58.121Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LOCAL_DHCP_DISABLE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp01",
+        "state": "WAITING"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "local DHCP service is disabled while the dhcp01 is in the WAITING state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.952Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_state": "WAITING",
+        "previous_state": "WAITING",
+        "server_name": "dhcp01",
+        "state": "SYNCING"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: server transitions from WAITING to SYNCING state, partner state is WAITING",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.952Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_SYNC_START",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_name": "dhcp02",
+        "partner_url": "https://192.0.2.3:8001/",
+        "server_name": "dhcp01"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: starting lease database synchronization with dhcp02 (https://192.0.2.3:8001/)",
+    "port": "8001",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.956Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LEASES_SYNC_LEASE_PAGE_RECEIVED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_name": "dhcp02",
+        "partner_url": "https://192.0.2.3:8001/",
+        "server_name": "dhcp01"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: received 0 leases from dhcp02 (https://192.0.2.3:8001/)",
+    "port": "8001",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.956Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-sync-completed",
+      "category": [
+        "database"
+      ],
+      "code": "HA_SYNC_SUCCESSFUL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_name": "dhcp02",
+        "partner_url": "https://192.0.2.3:8001/",
+        "server_name": "dhcp01"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: lease database synchronization with dhcp02 (https://192.0.2.3:8001/) completed successfully in 4.372 ms",
+    "port": "8001",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:01.957Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_state": "WAITING",
+        "previous_state": "SYNCING",
+        "server_name": "dhcp01",
+        "state": "READY"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: server transitions from SYNCING to READY state, partner state is WAITING",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:04.951Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_state": "READY",
+        "previous_state": "READY",
+        "server_name": "dhcp01",
+        "state": "HOT-STANDBY"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: server transitions from READY to HOT-STANDBY state, partner state is READY",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:04.951Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LOCAL_DHCP_ENABLE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp01",
+        "state": "HOT-STANDBY"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "local DHCP service is enabled while the dhcp01 is in the HOT-STANDBY state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:04.951Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LEASE_UPDATES_ENABLED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp01"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp01: lease updates will be sent to the partner while in HOT-STANDBY state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:05.238Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "command-received",
+      "category": [
+        "process"
+      ],
+      "code": "COMMAND_RECEIVED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "command": "ha-heartbeat",
+      "logger": {
+        "component": "commands"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.commands"
+    },
+    "message": "Received command 'ha-heartbeat'",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871203383872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:02.123Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-heartbeat-failed",
+      "category": [
+        "network"
+      ],
+      "code": "HA_HEARTBEAT_COMMUNICATIONS_FAILED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "connection"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_name": "dhcp01",
+        "partner_url": "https://192.0.2.2:8001/",
+        "server_name": "dhcp02"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp02: failed to send heartbeat to dhcp01 (https://192.0.2.2:8001/): Connection refused",
+    "port": "8001",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871186598464
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:06.821Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-communication-interrupted",
+      "category": [
+        "network"
+      ],
+      "code": "HA_COMMUNICATION_INTERRUPTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "connection"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_name": "dhcp01",
+        "server_name": "dhcp02"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp02: communication with dhcp01 is interrupted",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871211776576
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:06.821Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "partner_state": "UNDEFINED",
+        "previous_state": "HOT-STANDBY",
+        "server_name": "dhcp02",
+        "state": "PARTNER-DOWN"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp02: server transitions from HOT-STANDBY to PARTNER-DOWN state, partner state is UNDEFINED",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871211776576
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:06.821Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LEASE_UPDATES_DISABLED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp02"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp02: lease updates will not be sent to the partner while in PARTNER-DOWN state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871211776576
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:20:00.004Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-terminated",
+      "category": [
+        "process"
+      ],
+      "code": "HA_TERMINATED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "end",
+        "error"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp02"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "error",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "HA dhcp02: service terminated due to an unrecoverable condition. Check previous error message(s), address the problem and restart!",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1911,
+      "thread": {
+        "id": 139871211776576
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T09:12:43.685Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-service-started",
+      "category": [
+        "process"
+      ],
+      "code": "HA_SERVICE_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp03"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp03: started high availability service in passive-backup mode as primary server",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 2210,
+      "thread": {
+        "id": 136113866852224
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T09:12:43.685Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "ha-state-changed",
+      "category": [
+        "configuration"
+      ],
+      "code": "HA_STATE_TRANSITION_PASSIVE_BACKUP",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "previous_state": "WAITING",
+        "server_name": "dhcp03",
+        "state": "PASSIVE-BACKUP"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "dhcp03: server transitions from WAITING to PASSIVE-BACKUP state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 2210,
+      "thread": {
+        "id": 136113866852224
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T09:12:43.685Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HA_LOCAL_DHCP_ENABLE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "ha": {
+        "server_name": "dhcp03",
+        "state": "PASSIVE-BACKUP"
+      },
+      "logger": {
+        "component": "ha-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.ha-hooks"
+    },
+    "message": "local DHCP service is enabled while the dhcp03 is in the PASSIVE-BACKUP state",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 2210,
+      "thread": {
+        "id": 136113866852224
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  }
+]

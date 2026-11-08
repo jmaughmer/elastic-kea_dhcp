@@ -83,5 +83,172 @@
       "name": "kea-dhcp-ddns",
       "type": "kea"
     }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:00.904Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-applied",
+      "category": [
+        "configuration"
+      ],
+      "code": "DCTL_CONFIG_COMPLETE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dctl"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp-ddns.dctl"
+    },
+    "message": "server has completed configuration: listening on 127.0.0.1, port 53001, using UDP",
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:00.904Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "server-started",
+      "category": [
+        "process"
+      ],
+      "code": "DHCP_DDNS_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcpddns"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp-ddns.dhcpddns"
+    },
+    "message": "Kea DHCP-DDNS server version 3.0.5 started",
+    "network": {
+      "protocol": "dns"
+    },
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea",
+      "version": "3.0.5"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:22.824Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-reload-requested",
+      "category": [
+        "configuration"
+      ],
+      "code": "DCTL_CFG_FILE_RELOAD_SIGNAL_RECVD",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dctl"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp-ddns.dctl"
+    },
+    "message": "OS signal 1 received, reloading configuration from file: /etc/kea/kea-dhcp-ddns.conf",
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:22.824Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-applied",
+      "category": [
+        "configuration"
+      ],
+      "code": "DCTL_CONFIG_COMPLETE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dctl"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp-ddns.dctl"
+    },
+    "message": "server has completed configuration: listening on 127.0.0.1, port 53001, using UDP",
+    "process": {
+      "name": "kea-dhcp-ddns",
+      "pid": 1890,
+      "thread": {
+        "id": 140551236548352
+      }
+    },
+    "service": {
+      "name": "kea-dhcp-ddns",
+      "type": "kea"
+    }
   }
 ]

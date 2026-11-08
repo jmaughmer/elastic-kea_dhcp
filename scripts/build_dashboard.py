@@ -25,7 +25,13 @@ LAYER = "layer1"
 MIGRATION_VERSIONS = {"index-pattern": "8.0.0", "search": "8.0.0", "lens": "8.9.0", "dashboard": "8.9.0"}
 
 LEASE_ACTIONS = 'event.action : ("lease-allocated" or "lease-reused" or "lease-released" or "lease-declined" or "lease-offered" or "allocation-failed")'
-PROBLEM_LEVELS = 'log.level : ("error" or "fatal" or "warn")'
+# kea_expected_warning: warnings Kea logs at every start and reload with
+# multi-threading on, which need no action (see the pipeline).
+PROBLEM_LEVELS = 'log.level : ("error" or "fatal" or "warn") and not tags : "kea_expected_warning"'
+HA_PROBLEMS = ('event.action : ("ha-communication-interrupted" or "ha-heartbeat-failed" or "ha-lease-update-failed"'
+               ' or "ha-sync-failed" or "ha-terminated" or "ha-invalid-partner-state")')
+API_FAILURES = 'event.action : ("api-auth-failed" or "tls-handshake-failed" or "api-command-rejected")'
+CONFIG_ACTIONS = 'event.action : ("config-applied" or "config-reload-requested" or "config-failed")'
 
 
 def kql(query):
@@ -64,6 +70,21 @@ def unique_count(label, field, query=None):
     if query:
         col["filter"] = kql(query)
     return col
+
+
+def last_value(label, field):
+    """The field's value in the most recent document that has it."""
+    return {
+        "label": label,
+        "customLabel": True,
+        "dataType": "string",
+        "operationType": "last_value",
+        "isBucketed": False,
+        "scale": "ordinal",
+        "sourceField": field,
+        "filter": kql(f"{field} : *"),
+        "params": {"sortField": "@timestamp", "showArrayValues": False},
+    }
 
 
 def last_seen(label="Last seen"):
@@ -223,13 +244,15 @@ PANELS = [
      "Clients that released their lease (DHCPRELEASE / RELEASE).",
      metric(count("Leases released", 'event.action : "lease-released"')), "", 16, 0, 8, 6),
     ("kea-dhcp-kpi-declines", "Leases declined",
-     "DHCPDECLINE / DECLINE: a client found the offered address already in use. Usually an address conflict.",
+     "Addresses found already in use: a client's DHCPDECLINE / DECLINE, or Kea's ping check "
+     "(DHCP4_SERVER_INITIATED_DECLINE). Usually an address conflict.",
      metric(count("Leases declined", 'event.action : "lease-declined"')), "", 24, 0, 8, 6),
     ("kea-dhcp-kpi-alloc-fail", "Allocation failures",
      "ALLOC_ENGINE_*_ALLOC_FAIL*: Kea had no address to give. Often a full pool or an unmatched client class.",
      metric(count("Allocation failures", 'event.action : "allocation-failed"')), "", 32, 0, 8, 6),
     ("kea-dhcp-kpi-problems", "Errors and warnings",
-     "Log entries at WARN, ERROR or FATAL severity.",
+     "Log entries at WARN, ERROR or FATAL severity, without the multi-threading notices Kea logs at every "
+     "start and reload (tag kea_expected_warning).",
      metric(count("Errors and warnings", PROBLEM_LEVELS)), "", 40, 0, 8, 6),
 
     ("kea-dhcp-lease-activity", "Lease activity over time",
@@ -260,13 +283,14 @@ PANELS = [
      }),
      'event.action : ("lease-allocated" or "lease-reused" or "lease-released")', 0, 30, 24, 14),
     ("kea-dhcp-top-codes", "Top Kea message IDs",
-     "Most frequent Kea log message IDs. See the Kea messages manual for each ID.",
+     "Most frequent Kea log message IDs, without HA heartbeats (one COMMAND_RECEIVED per server every "
+     "heartbeat-delay). See the Kea messages manual for each ID.",
      table({
          "c": terms("Message ID", "event.code", "n", size=20, other=False),
          "n": count("Events"),
          "t": last_seen(),
      }),
-     "", 24, 30, 24, 14),
+     'not kea.command : "ha-heartbeat"', 24, 30, 24, 14),
 
     ("kea-dhcp-alloc-fail-clients", "Clients failing allocation",
      "Clients Kea could not give an address to.",
@@ -277,13 +301,49 @@ PANELS = [
      }),
      'event.action : "allocation-failed"', 0, 44, 24, 12),
     ("kea-dhcp-declined-addresses", "Declined addresses",
-     "Addresses clients declined because another device answered on them. Kea holds each one for decline-probation-period.",
+     "Addresses another device already uses, reported by a client's DHCPDECLINE or found by Kea's ping check. "
+     "Kea holds each one for decline-probation-period.",
      table({
          "c": terms("Address", "kea.lease.address", "n", size=20, data_type="ip", other=False),
          "n": count("Declines"),
+         "r": last_value("Last found by", "event.reason"),
          "t": last_seen(),
      }),
      'event.action : "lease-declined"', 24, 44, 24, 12),
+
+    ("kea-dhcp-ha-state", "HA state by server",
+     "Latest high-availability state each server reported (HA_STATE_TRANSITION, HA_LOCAL_DHCP_*). "
+     "PARTNER-DOWN, WAITING or TERMINATED needs a look.",
+     table({
+         "s": terms("HA server", "kea.ha.server_name", "t", size=20, other=False),
+         "st": last_value("State", "kea.ha.state"),
+         "ps": last_value("Partner state", "kea.ha.partner_state"),
+         "t": last_seen("Last change"),
+     }),
+     "kea.ha.state : *", 0, 56, 24, 12),
+    ("kea-dhcp-ha-problems", "HA problems over time",
+     "Failed heartbeats, lease updates and syncs, interrupted communication with the partner, and terminated HA service.",
+     xy("bar_stacked", count("Events"), terms("Problem", "event.action", "y", size=10)),
+     HA_PROBLEMS, 24, 56, 24, 12),
+
+    ("kea-dhcp-api-failures", "API access failures",
+     "Control API requests refused: wrong or missing credentials, or a TLS client without a valid "
+     "certificate. Kea logs these at INFO, so they are not in the warnings count.",
+     xy("bar_stacked", count("Failures"), terms("Failure", "event.action", "y", size=5)),
+     API_FAILURES, 0, 68, 16, 12),
+    ("kea-dhcp-api-commands", "API commands",
+     "Commands received over the control API or socket, without HA heartbeats.",
+     table({
+         "c": terms("Command", "kea.command", "n", size=20, other=False),
+         "n": count("Count"),
+         "t": last_seen(),
+     }),
+     'event.action : "command-received" and not kea.command : "ha-heartbeat"', 16, 68, 16, 12),
+    ("kea-dhcp-config-changes", "Configuration loads and reloads",
+     "Configurations applied, reloads requested (systemctl reload, config-reload) and failed loads. "
+     "A failed reload leaves the previous configuration running.",
+     xy("bar_stacked", count("Events"), terms("Action", "event.action", "y", size=5)),
+     CONFIG_ACTIONS, 32, 68, 16, 12),
 ]
 
 
@@ -327,7 +387,7 @@ def saved_search():
 def dashboard():
     panels, refs = [], []
     layout = [(p[0], "lens", p[5], p[6], p[7], p[8]) for p in PANELS]
-    layout.append((SEARCH_ID, "search", 0, 56, 48, 15))
+    layout.append((SEARCH_ID, "search", 0, 80, 48, 15))
     for i, (obj_id, obj_type, x, y, w, h) in enumerate(layout, 1):
         idx = f"p{i}"
         panels.append({
@@ -344,7 +404,7 @@ def dashboard():
         "id": DASHBOARD_ID,
         "attributes": {
             "title": "[Kea DHCP] Overview",
-            "description": "Lease activity, allocation failures, address conflicts and server health from ISC Kea DHCP logs.",
+            "description": "Lease activity, allocation failures, address conflicts, HA, API access and configuration changes from ISC Kea DHCP logs.",
             "panelsJSON": json.dumps(panels),
             "optionsJSON": json.dumps({"useMargins": True, "syncColors": False, "syncCursor": True, "syncTooltips": False, "hidePanelTitles": False}),
             "timeRestore": True,

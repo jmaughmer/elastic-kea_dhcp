@@ -1,6 +1,6 @@
 ---
 # Ingest pipeline for ISC Kea DHCP server logs (kea-dhcp4, kea-dhcp6,
-# kea-dhcp-ddns, kea-ctrl-agent).
+# kea-dhcp-ddns, and kea-ctrl-agent on Kea releases older than 2.7.2).
 #
 # Parses the default Kea logger layouts:
 #   file / stdout / stderr: %D{%Y-%m-%d %H:%M:%S.%q} %-5p [%c/%i.%t] %m\n
@@ -12,7 +12,7 @@
 description: Parse ISC Kea DHCP server logs into ECS fields
 _meta:
   project: https://github.com/jmaughmer/elastic-kea_dhcp
-  version: 1.0.0
+  version: 1.1.0
 processors:
   - set:
       tag: set_ecs_version
@@ -94,14 +94,23 @@ processors:
       ignore_missing: true
   - script:
       tag: script_service
-      description: Derive the Kea service and IP family from the process name.
+      description: >-
+        Derive the Kea service from the process name, and the protocol and IP
+        family for DHCP and DNS activity. API, command, HA and hook management
+        messages are not DHCP traffic, so they get no network fields.
       lang: painless
       if: ctx.process?.name != null
+      params:
+        non_traffic_components: [auth, http, commands, ha-hooks, hooks, dctl]
       source: |
         String p = ctx.process.name;
         ctx.service = ctx.service ?: new HashMap();
         ctx.service.type = 'kea';
         ctx.service.name = p;
+        String c = ctx.kea?.logger?.component;
+        if (c != null && (params.non_traffic_components.contains(c) || c.endsWith('-cmds-hooks'))) {
+          return;
+        }
         ctx.network = ctx.network ?: new HashMap();
         if (p == 'kea-dhcp4') {
           ctx.network.protocol = 'dhcp';
@@ -206,15 +215,55 @@ processors:
       field: message
       patterns:
         - "server version %{NOTSPACE:service.version}"
-        - "version %{NOTSPACE:service.version}"
+        - "version:? %{NOTSPACE:service.version}"
       if: ctx.event?.code instanceof String && (ctx.event.code.endsWith('_STARTING') || ctx.event.code.endsWith('_STARTED'))
       ignore_failure: true
+  # HA_STATE_TRANSITION carries the partner's state; passive-backup mode logs
+  # HA_STATE_TRANSITION_PASSIVE_BACKUP, which has no partner state.
   - grok:
       tag: grok_ha_state
       field: message
       patterns:
         - "transitions from %{NOTSPACE:kea.ha.previous_state} to %{NOTSPACE:kea.ha.state} state(?:, partner state is %{NOTSPACE:kea.ha.partner_state})?"
-      if: ctx.event?.code == 'HA_STATE_TRANSITION'
+      if: ctx.event?.code instanceof String && ctx.event.code.startsWith('HA_STATE_TRANSITION')
+      ignore_failure: true
+  # Most HA messages start with this server's HA name ("dhcp01: ..."); some
+  # name the partner, with its URL when Kea knows it.
+  #   HA_SYNC_SUCCESSFUL dhcp01: lease database synchronization with dhcp02 (https://192.0.2.3:8001/) completed ...
+  #   HA_LOCAL_DHCP_ENABLE local DHCP service is enabled while the dhcp01 is in the HOT-STANDBY state
+  - grok:
+      tag: grok_ha_names
+      field: message
+      pattern_definitions:
+        KEA_HA_NAME: "[^\\s:()]+"
+      patterns:
+        - "^local DHCP service is (?:enabled|disabled) while the %{KEA_HA_NAME:kea.ha.server_name} is in the %{NOTSPACE:kea.ha.state} state"
+        - "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: (?:.*? )?(?:with|to|from|by) %{KEA_HA_NAME:kea.ha.partner_name} \\(%{URI:kea.ha.partner_url}\\)"
+        - "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: communication with %{KEA_HA_NAME:kea.ha.partner_name} is interrupted"
+        - "^(?:HA )?%{KEA_HA_NAME:kea.ha.server_name}: "
+      if: ctx.event?.code instanceof String && ctx.event.code.startsWith('HA_')
+      ignore_failure: true
+
+  # Control API (served by the daemons on Kea 2.7.2+, by kea-ctrl-agent before).
+  #   COMMAND_RECEIVED Received command 'config-get'
+  #   HTTP_CLIENT_REQUEST_AUTHORIZED received HTTP request authorized for 'admin'
+  #   HTTP_CONNECTION_HANDSHAKE_FAILED TLS handshake with 192.0.2.50 failed with peer did not return a certificate (SSL routines)
+  - grok:
+      tag: grok_command
+      field: message
+      patterns:
+        - "[Rr]eceived command '%{DATA:kea.command}'"
+        - "rejected command '%{DATA:kea.command}'"
+      if: ctx.event?.code == 'COMMAND_RECEIVED' || ctx.event?.code == 'COMMAND_HTTP_LISTENER_COMMAND_REJECTED'
+      ignore_failure: true
+  - grok:
+      tag: grok_api
+      field: message
+      patterns:
+        - "authorized for '%{DATA:user.name}'"
+        - "TLS handshake with \\[?%{IP:source.ip}\\]?(?::%{POSINT:source.port:long})? failed with %{GREEDYDATA:event.reason}"
+        - "malformed authentication header: %{GREEDYDATA:event.reason}"
+      if: ctx.event?.code instanceof String && ctx.event.code.startsWith('HTTP_')
       ignore_failure: true
 
   - script:
@@ -238,6 +287,8 @@ processors:
           DHCP6_RELEASE_PD: [lease-released, network, end, success]
           DHCP4_DECLINE_LEASE: [lease-declined, network, denied, failure]
           DHCP6_DECLINE_LEASE: [lease-declined, network, denied, failure]
+          # The ping check hook found the address answering before it was offered.
+          DHCP4_SERVER_INITIATED_DECLINE: [lease-declined, network, denied, failure]
           DHCP4_INIT_REBOOT: [init-reboot, network, protocol, ""]
           DHCP4_NO_LEASE_INIT_REBOOT: [lease-not-found, network, info, failure]
           ALLOC_ENGINE_V4_LEASE_RECLAIM: [lease-reclaimed, network, end, ""]
@@ -250,19 +301,68 @@ processors:
           DHCP6_SUBNET_SELECTION_FAILED: [subnet-selection-failed, network, denied, failure]
           DHCP4_STARTED: [server-started, process, start, success]
           DHCP6_STARTED: [server-started, process, start, success]
+          DHCP_DDNS_STARTED: [server-started, process, start, success]
+          CTRL_AGENT_STARTED: [server-started, process, start, success]
           DHCP4_SHUTDOWN: [server-stopped, process, end, success]
           DHCP6_SHUTDOWN: [server-stopped, process, end, success]
+          DCTL_SHUTDOWN: [server-stopped, process, end, success]
+          # Configuration: loaded at start-up, reloaded on SIGHUP / config-reload
+          # (`systemctl reload`), or set through the API. CONFIG_COMPLETE is
+          # logged every time, so config-applied counts each load once.
           DHCP4_CONFIG_COMPLETE: [config-applied, configuration, change, success]
           DHCP6_CONFIG_COMPLETE: [config-applied, configuration, change, success]
+          DCTL_CONFIG_COMPLETE: [config-applied, configuration, change, success]
+          DHCP4_DYNAMIC_RECONFIGURATION: [config-reload-requested, configuration, change, ""]
+          DHCP6_DYNAMIC_RECONFIGURATION: [config-reload-requested, configuration, change, ""]
+          DCTL_CFG_FILE_RELOAD_SIGNAL_RECVD: [config-reload-requested, configuration, change, ""]
           DHCP4_CONFIG_LOAD_FAIL: [config-failed, configuration, error, failure]
           DHCP6_CONFIG_LOAD_FAIL: [config-failed, configuration, error, failure]
+          DHCP4_DYNAMIC_RECONFIGURATION_FAIL: [config-failed, configuration, error, failure]
+          DHCP6_DYNAMIC_RECONFIGURATION_FAIL: [config-failed, configuration, error, failure]
+          DHCP4_CONFIG_UNRECOVERABLE_ERROR: [config-failed, configuration, error, failure]
+          DHCP6_CONFIG_UNRECOVERABLE_ERROR: [config-failed, configuration, error, failure]
+          DCTL_CFG_FILE_RELOAD_ERROR: [config-failed, configuration, error, failure]
+          DCTL_CONFIG_FILE_LOAD_FAIL: [config-failed, configuration, error, failure]
+          # Control API.
+          COMMAND_RECEIVED: [command-received, process, info, ""]
+          COMMAND_HTTP_LISTENER_COMMAND_REJECTED: [api-command-rejected, network, denied, failure]
+          HTTP_CLIENT_REQUEST_AUTHORIZED: [api-auth-succeeded, authentication, start, success]
+          HTTP_CLIENT_REQUEST_NOT_AUTHORIZED: [api-auth-failed, authentication, start, failure]
+          HTTP_CLIENT_REQUEST_NO_AUTH_HEADER: [api-auth-failed, authentication, start, failure]
+          HTTP_CLIENT_REQUEST_BAD_AUTH_HEADER: [api-auth-failed, authentication, start, failure]
+          HTTP_CONNECTION_HANDSHAKE_FAILED: [tls-handshake-failed, network, connection, failure]
+          # High availability.
           HA_STATE_TRANSITION: [ha-state-changed, configuration, change, ""]
+          HA_STATE_TRANSITION_PASSIVE_BACKUP: [ha-state-changed, configuration, change, ""]
+          HA_SERVICE_STARTED: [ha-service-started, process, start, success]
+          HA_COMMUNICATION_INTERRUPTED: [ha-communication-interrupted, network, connection, failure]
+          HA_HEARTBEAT_COMMUNICATIONS_FAILED: [ha-heartbeat-failed, network, connection, failure]
+          HA_HEARTBEAT_FAILED: [ha-heartbeat-failed, network, connection, failure]
+          HA_SYNC_SUCCESSFUL: [ha-sync-completed, database, change, success]
+          HA_SYNC_FAILED: [ha-sync-failed, database, error, failure]
+          HA_LEASES_SYNC_FAILED: [ha-sync-failed, database, error, failure]
+          HA_LEASES_SYNC_COMMUNICATIONS_FAILED: [ha-sync-failed, database, error, failure]
+          HA_LEASE_SYNC_FAILED: [ha-sync-failed, database, error, failure]
+          HA_LEASES_BACKLOG_FAILED: [ha-lease-update-failed, database, error, failure]
+          HA_LEASES_BACKLOG_COMMUNICATIONS_FAILED: [ha-lease-update-failed, database, error, failure]
+          HA_TERMINATED: [ha-terminated, process, end, failure]
+          HA_TERMINATED_PARTNER_DID_NOT_RESTART: [ha-terminated, process, end, failure]
+          HA_HIGH_CLOCK_SKEW_CAUSED_TERMINATION: [ha-terminated, process, end, failure]
+          HA_LEASE_UPDATE_REJECTS_CAUSED_TERMINATION: [ha-terminated, process, end, failure]
         prefix:
           ALLOC_ENGINE_V4_ALLOC_FAIL: [allocation-failed, network, denied, failure]
           ALLOC_ENGINE_V6_ALLOC_FAIL: [allocation-failed, network, denied, failure]
           DHCP4_PACKET_NAK: [packet-nak, network, denied, failure]
           DHCP4_PACKET_DROP: [packet-dropped, network, denied, failure]
           DHCP6_PACKET_DROP: [packet-dropped, network, denied, failure]
+          # HA_LEASE_UPDATE_FAILED, _COMMUNICATIONS_FAILED, _CONFLICT, ..._FAILED_ON_PEER.
+          # (HA_LEASE_UPDATES_ENABLED / _DISABLED do not match: "UPDATES_".)
+          HA_LEASE_UPDATE_: [ha-lease-update-failed, database, error, failure]
+          HA_INVALID_PARTNER_STATE_: [ha-invalid-partner-state, process, error, failure]
+        reasons:
+          DHCP4_DECLINE_LEASE: client reported the address in use
+          DHCP6_DECLINE_LEASE: client reported the address in use
+          DHCP4_SERVER_INITIATED_DECLINE: server found the address in use (ping check)
       source: |
         ctx.event = ctx.event ?: new HashMap();
         ctx.event.kind = 'event';
@@ -301,6 +401,25 @@ processors:
         if (isError && ctx.event.outcome == null) {
           ctx.event.outcome = 'failure';
         }
+        if (code != null && ctx.event.reason == null && params.reasons.containsKey(code)) {
+          ctx.event.reason = params.reasons.get(code);
+        }
+        if (code != null && code.startsWith('HTTP_')) {
+          ctx.network = ctx.network ?: new HashMap();
+          ctx.network.protocol = 'http';
+        }
+
+  # Warnings Kea logs at every start and reload when multi-threading is on
+  # (the default since Kea 2.3). They need no action; the dashboard leaves
+  # events with this tag out of its error and warning counts.
+  - append:
+      tag: append_expected_warning
+      field: tags
+      value: kea_expected_warning
+      allow_duplicates: false
+      if: >-
+        ['DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED', 'DHCP6_RESERVATIONS_LOOKUP_FIRST_ENABLED',
+        'DHCPSRV_MT_DISABLED_QUEUE_CONTROL'].contains(ctx.event?.code)
 
   # ECS client fields.
   - script:
@@ -348,6 +467,12 @@ processors:
       value: "{{{host.hostname}}}"
       allow_duplicates: false
       if: ctx.host?.hostname != null
+  - append:
+      tag: append_related_user
+      field: related.user
+      value: "{{{user.name}}}"
+      allow_duplicates: false
+      if: ctx.user?.name != null
 
   - remove:
       tag: remove_tmp

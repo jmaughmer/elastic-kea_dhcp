@@ -1,0 +1,735 @@
+[
+  {
+    "@timestamp": "2026-10-27T08:00:00.937Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCPSRV_MT_DISABLED_QUEUE_CONTROL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcpsrv"
+      }
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.dhcpsrv"
+    },
+    "message": "disabling dhcp queue control when multi-threading is enabled.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "tags": [
+      "kea_expected_warning"
+    ]
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:00.937Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "warn",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "Multi-threading is enabled and host reservations lookup is always performed first.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "tags": [
+      "kea_expected_warning"
+    ]
+  },
+  {
+    "@timestamp": "2026-10-27T08:00:00.939Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HTTP_COMMAND_MGR_SERVICE_STARTED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "commands"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.commands"
+    },
+    "message": "started HTTPS service bound to address: 192.0.2.2 port: 8004",
+    "network": {
+      "protocol": "http"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:02:54.323Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "api-auth-succeeded",
+      "category": [
+        "authentication"
+      ],
+      "code": "HTTP_CLIENT_REQUEST_AUTHORIZED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "auth"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.auth"
+    },
+    "message": "received HTTP request authorized for 'phpipam'",
+    "network": {
+      "protocol": "http"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "related": {
+      "user": [
+        "phpipam"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "user": {
+      "name": "phpipam"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:02:54.323Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "command-received",
+      "category": [
+        "process"
+      ],
+      "code": "COMMAND_RECEIVED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "command": "config-get",
+      "logger": {
+        "component": "commands"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.commands"
+    },
+    "message": "Received command 'config-get'",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:02:55.101Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "command-received",
+      "category": [
+        "process"
+      ],
+      "code": "COMMAND_RECEIVED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "command": "reservation-add",
+      "logger": {
+        "component": "commands"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.commands"
+    },
+    "message": "Received command 'reservation-add'",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:02:55.101Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "HOST_CMDS_RESERV_ADD_SUCCESS",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "host-cmds-hooks"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.host-cmds-hooks"
+    },
+    "message": "reservation-add command success (parameters: { \"reservation\": { \"hostname\": \"host21\", \"hw-address\": \"aa:bb:cc:00:00:21\", \"ip-address\": \"192.0.2.21\", \"subnet-id\": 1 } })",
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:28.139Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "api-auth-failed",
+      "category": [
+        "authentication"
+      ],
+      "code": "HTTP_CLIENT_REQUEST_NOT_AUTHORIZED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "auth"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.auth"
+    },
+    "message": "received HTTP request with not matching authentication header",
+    "network": {
+      "protocol": "http"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:03:28.605Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "api-auth-failed",
+      "category": [
+        "authentication"
+      ],
+      "code": "HTTP_CLIENT_REQUEST_NO_AUTH_HEADER",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "start"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "auth"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.auth"
+    },
+    "message": "received HTTP request without required authentication header",
+    "network": {
+      "protocol": "http"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:04:45.949Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "tls-handshake-failed",
+      "category": [
+        "network"
+      ],
+      "code": "HTTP_CONNECTION_HANDSHAKE_FAILED",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "reason": "peer did not return a certificate (SSL routines)",
+      "type": [
+        "connection"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "http"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.http"
+    },
+    "message": "TLS handshake with 198.51.100.7 failed with peer did not return a certificate (SSL routines)",
+    "network": {
+      "protocol": "http"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "related": {
+      "ip": [
+        "198.51.100.7"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    },
+    "source": {
+      "ip": "198.51.100.7"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:13.634Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-reload-requested",
+      "category": [
+        "configuration"
+      ],
+      "code": "DHCP4_DYNAMIC_RECONFIGURATION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "initiate server reconfiguration using file: /etc/kea/kea-dhcp4.conf, after receiving SIGHUP signal or config-reload command",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:13.680Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-applied",
+      "category": [
+        "configuration"
+      ],
+      "code": "DHCP4_CONFIG_COMPLETE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "success",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "DHCPv4 server has completed configuration: added IPv4 subnets: 2; DDNS: enabled",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:10:13.683Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "category": [
+        "process"
+      ],
+      "code": "DHCP4_DYNAMIC_RECONFIGURATION_SUCCESS",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "info"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "dynamic server reconfiguration succeeded with file: /etc/kea/kea-dhcp4.conf",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:15:02.001Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-reload-requested",
+      "category": [
+        "configuration"
+      ],
+      "code": "DHCP4_DYNAMIC_RECONFIGURATION",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "type": [
+        "change"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "initiate server reconfiguration using file: /etc/kea/kea-dhcp4.conf, after receiving SIGHUP signal or config-reload command",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:15:02.050Z",
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "config-failed",
+      "category": [
+        "configuration"
+      ],
+      "code": "DHCP4_DYNAMIC_RECONFIGURATION_FAIL",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "type": [
+        "error"
+      ]
+    },
+    "kea": {
+      "logger": {
+        "component": "dhcp4"
+      }
+    },
+    "log": {
+      "level": "error",
+      "logger": "kea-dhcp4.dhcp4"
+    },
+    "message": "dynamic server reconfiguration failed with file: /etc/kea/kea-dhcp4.conf",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226115839872
+      }
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  },
+  {
+    "@timestamp": "2026-10-27T08:20:09.330Z",
+    "client": {
+      "mac": "A4-83-E7-01-02-04"
+    },
+    "ecs": {
+      "version": "8.17.0"
+    },
+    "event": {
+      "action": "lease-declined",
+      "category": [
+        "network"
+      ],
+      "code": "DHCP4_SERVER_INITIATED_DECLINE",
+      "dataset": "kea.dhcp",
+      "kind": "event",
+      "module": "kea",
+      "outcome": "failure",
+      "reason": "server found the address in use (ping check)",
+      "type": [
+        "denied"
+      ]
+    },
+    "kea": {
+      "client": {
+        "hwaddr": "a4:83:e7:01:02:04",
+        "hwtype": 1
+      },
+      "lease": {
+        "address": "192.0.2.13",
+        "duration": 86400,
+        "type": "address"
+      },
+      "logger": {
+        "component": "leases"
+      },
+      "transaction_id": "0x0badf00e"
+    },
+    "log": {
+      "level": "info",
+      "logger": "kea-dhcp4.leases"
+    },
+    "message": "[hwtype=1 a4:83:e7:01:02:04], cid=[no info], tid=0x0badf00e: Lease for addr 192.0.2.13 has been found to be already in use. The lease will be unavailable for 86400 seconds.",
+    "network": {
+      "protocol": "dhcp",
+      "type": "ipv4"
+    },
+    "process": {
+      "name": "kea-dhcp4",
+      "pid": 1873,
+      "thread": {
+        "id": 140226107447040
+      }
+    },
+    "related": {
+      "ip": [
+        "192.0.2.13"
+      ]
+    },
+    "service": {
+      "name": "kea-dhcp4",
+      "type": "kea"
+    }
+  }
+]
