@@ -69,8 +69,13 @@ def generate(hours):
                                    f"{v6_label(m, tid)}: lease for address {v6} and iaid=1 has been allocated for 7200 seconds")))
         elif roll < 0.95:
             bad = f"10.20.1.{rnd.choice([17, 17, 17, 88, 140])}"
-            out.append((host, line(t, "INFO", "kea-dhcp4.leases", pid, "DHCP4_DECLINE_LEASE",
-                                   f"Received DHCPDECLINE for addr {bad} from client {v4_label(m, tid)}. The lease will be unavailable for 86400 seconds.")))
+            if rnd.random() < 0.5:
+                out.append((host, line(t, "INFO", "kea-dhcp4.leases", pid, "DHCP4_DECLINE_LEASE",
+                                       f"Received DHCPDECLINE for addr {bad} from client {v4_label(m, tid)}. The lease will be unavailable for 86400 seconds.")))
+            else:
+                # Found by the ping check hook before the address was offered.
+                out.append((host, line(t, "INFO", "kea-dhcp4.leases", pid, "DHCP4_SERVER_INITIATED_DECLINE",
+                                       f"{v4_label(m, tid)}: Lease for addr {bad} has been found to be already in use. The lease will be unavailable for 86400 seconds.")))
         elif roll < 0.975:
             # A guest VLAN pool that fills up in the afternoon.
             if 13 <= t.hour < 17:
@@ -83,12 +88,128 @@ def generate(hours):
             out.append((host, line(t, "INFO", "kea-dhcp4.leases", pid, "DHCP4_NO_LEASE_INIT_REBOOT",
                                    f"{v4_label(m, tid)}: no lease for address 192.168.1.{rnd.randrange(2, 250)} requested by INIT-REBOOT client")))
         elif roll < 0.981:
-            out.append((host, line(t, "ERROR", "kea-dhcp4.ha-hooks", pid, "HA_LEASE_UPDATE_COMMUNICATIONS_FAILED",
-                                   f"{host}: failed to communicate with partner server: Connection refused")))
+            partner, addr = ("dhcp02", "192.0.2.3") if host == "dhcp01" else ("dhcp01", "192.0.2.2")
+            out.append((host, line(t, "WARN", "kea-dhcp4.ha-hooks", pid, "HA_LEASE_UPDATE_COMMUNICATIONS_FAILED",
+                                   f"{host}: failed to send lease update {v4_label(m, tid)} to {partner} (https://{addr}:8001/): Connection refused")))
         elif roll < 0.982:
             out.append((host, line(t, "ERROR", "kea-dhcp4.dhcpsrv", pid, "DHCPSRV_MEMFILE_LFC_EXECUTE_FAILED",
                                    "execution of the LFC failed: unable to execute /usr/sbin/kea-lfc")))
-    return out
+    return out + scheduled(rnd, start, now)
+
+
+HA_URL = {"dhcp01": "https://192.0.2.2:8001/", "dhcp02": "https://192.0.2.3:8001/"}
+
+
+def transition(ts, host, pid, old, new, partner_state):
+    return (host, line(ts, "INFO", "kea-dhcp4.ha-hooks", pid, "HA_STATE_TRANSITION",
+                       f"{host}: server transitions from {old} to {new} state, partner state is {partner_state}"))
+
+
+def ha_start(ts, host, pid, role, partner, partner_state):
+    """A server joining its partner: WAITING, SYNCING, READY, HOT-STANDBY."""
+    s = dt.timedelta(seconds=1)
+    return [
+        (host, line(ts, "INFO", "kea-dhcp4.ha-hooks", pid, "HA_SERVICE_STARTED",
+                    f"{host}: started high availability service in hot-standby mode as {role} server")),
+        (host, line(ts, "INFO", "kea-dhcp4.ha-hooks", pid, "HA_LOCAL_DHCP_DISABLE",
+                    f"local DHCP service is disabled while the {host} is in the WAITING state")),
+        transition(ts + s, host, pid, "WAITING", "SYNCING", partner_state),
+        (host, line(ts + s, "INFO", "kea-dhcp4.ha-hooks", pid, "HA_SYNC_SUCCESSFUL",
+                    f"{host}: lease database synchronization with {partner} ({HA_URL[partner]}) completed successfully in 812.4 ms")),
+        transition(ts + 2 * s, host, pid, "SYNCING", "READY", partner_state),
+        transition(ts + 5 * s, host, pid, "READY", "HOT-STANDBY", "HOT-STANDBY" if partner_state != "WAITING" else "READY"),
+        (host, line(ts + 5 * s, "INFO", "kea-dhcp4.ha-hooks", pid, "HA_LOCAL_DHCP_ENABLE",
+                    f"local DHCP service is enabled while the {host} is in the HOT-STANDBY state")),
+    ]
+
+
+def reload(ts, host, pid, ok=True):
+    """`systemctl reload kea-dhcp4` (SIGHUP), as the Ansible role does on a config change."""
+    s = dt.timedelta(milliseconds=40)
+    conf = "/etc/kea/kea-dhcp4.conf"
+    out = [(host, line(ts, "INFO", "kea-dhcp4.dhcp4", pid, "DHCP4_DYNAMIC_RECONFIGURATION",
+                       f"initiate server reconfiguration using file: {conf}, after receiving SIGHUP signal or config-reload command"))]
+    if not ok:
+        return out + [(host, line(ts + s, "ERROR", "kea-dhcp4.dhcp4", pid, "DHCP4_DYNAMIC_RECONFIGURATION_FAIL",
+                                  f"dynamic server reconfiguration failed with file: {conf}"))]
+    return out + [
+        (host, line(ts + s, "WARN", "kea-dhcp4.dhcpsrv", pid, "DHCPSRV_MT_DISABLED_QUEUE_CONTROL",
+                    "disabling dhcp queue control when multi-threading is enabled.")),
+        (host, line(ts + s, "WARN", "kea-dhcp4.dhcp4", pid, "DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED",
+                    "Multi-threading is enabled and host reservations lookup is always performed first.")),
+        (host, line(ts + 2 * s, "INFO", "kea-dhcp4.dhcp4", pid, "DHCP4_CONFIG_COMPLETE",
+                    "DHCPv4 server has completed configuration: added IPv4 subnets: 3; DDNS: enabled")),
+        (host, line(ts + 2 * s, "INFO", "kea-dhcp4.dhcp4", pid, "DHCP4_DYNAMIC_RECONFIGURATION_SUCCESS",
+                    f"dynamic server reconfiguration succeeded with file: {conf}")),
+    ]
+
+
+def api_call(ts, host, pid, user, command):
+    return [
+        (host, line(ts, "INFO", "kea-dhcp4.auth", pid, "HTTP_CLIENT_REQUEST_AUTHORIZED",
+                    f"received HTTP request authorized for '{user}'")),
+        (host, line(ts, "INFO", "kea-dhcp4.commands", pid, "COMMAND_RECEIVED", f"Received command '{command}'")),
+    ]
+
+
+def scheduled(rnd, start, now):
+    """HA, API and configuration events that follow a timetable rather than client traffic."""
+    pids = dict(SERVERS)
+    out = []
+    # Both servers come up together at the start of the window.
+    out += ha_start(start, "dhcp01", pids["dhcp01"], "primary", "dhcp02", "WAITING")
+    out += ha_start(start, "dhcp02", pids["dhcp02"], "standby", "dhcp01", "WAITING")
+
+    # Heartbeats each minute in both directions (Kea's default is every 10 s).
+    t = start
+    while t < now:
+        for host in ("dhcp01", "dhcp02"):
+            out.append((host, line(t, "INFO", "kea-dhcp4.commands", pids[host], "COMMAND_RECEIVED",
+                                   "Received command 'ha-heartbeat'")))
+        t += dt.timedelta(minutes=1)
+
+    # phpIPAM: the reservation sync every 15 minutes, the DHCP page now and then.
+    t = start
+    while t < now:
+        out += api_call(t, "dhcp01", pids["dhcp01"], "phpipam", "reservation-get-page")
+        if rnd.random() < 0.2:
+            out += api_call(t + dt.timedelta(seconds=1), "dhcp01", pids["dhcp01"], "phpipam", "reservation-add")
+        if rnd.random() < 0.15:
+            out += api_call(t + dt.timedelta(minutes=4), "dhcp01", pids["dhcp01"], "phpipam", "config-get")
+        t += dt.timedelta(minutes=15)
+
+    # The primary fails 7 hours ago and is back after 20 minutes.
+    down = now - dt.timedelta(hours=7)
+    for i in range(3):
+        out.append(("dhcp02", line(down + dt.timedelta(seconds=10 * i), "WARN", "kea-dhcp4.ha-hooks", pids["dhcp02"],
+                                   "HA_HEARTBEAT_COMMUNICATIONS_FAILED",
+                                   f"dhcp02: failed to send heartbeat to dhcp01 ({HA_URL['dhcp01']}): Connection refused")))
+    lost = down + dt.timedelta(seconds=30)
+    out.append(("dhcp02", line(lost, "WARN", "kea-dhcp4.ha-hooks", pids["dhcp02"], "HA_COMMUNICATION_INTERRUPTED",
+                               "dhcp02: communication with dhcp01 is interrupted")))
+    out.append(transition(lost + dt.timedelta(seconds=60), "dhcp02", pids["dhcp02"], "HOT-STANDBY", "PARTNER-DOWN", "UNDEFINED"))
+    back = down + dt.timedelta(minutes=20)
+    out += ha_start(back, "dhcp01", pids["dhcp01"], "primary", "dhcp02", "PARTNER-DOWN")
+    out.append(transition(back + dt.timedelta(seconds=3), "dhcp02", pids["dhcp02"], "PARTNER-DOWN", "HOT-STANDBY", "READY"))
+
+    # A configuration change rolled out 5 hours ago, one server at a time, and
+    # a bad one 3 hours ago that dhcp02 rejected before it was fixed.
+    out += reload(now - dt.timedelta(hours=5), "dhcp01", pids["dhcp01"])
+    out += reload(now - dt.timedelta(hours=5, minutes=-2), "dhcp02", pids["dhcp02"])
+    out += reload(now - dt.timedelta(hours=3), "dhcp02", pids["dhcp02"], ok=False)
+    out += reload(now - dt.timedelta(hours=2, minutes=48), "dhcp02", pids["dhcp02"])
+
+    # Someone tries the API with an old password, then without a client certificate.
+    burst = now - dt.timedelta(hours=4)
+    for i in range(12):
+        out.append(("dhcp02", line(burst + dt.timedelta(seconds=20 * i), "INFO", "kea-dhcp4.auth", pids["dhcp02"],
+                                   "HTTP_CLIENT_REQUEST_NOT_AUTHORIZED",
+                                   "received HTTP request with not matching authentication header")))
+    for i in range(4):
+        out.append(("dhcp02", line(burst + dt.timedelta(minutes=10, seconds=15 * i), "INFO", "kea-dhcp4.http", pids["dhcp02"],
+                                   "HTTP_CONNECTION_HANDSHAKE_FAILED",
+                                   "TLS handshake with 198.51.100.7 failed with peer did not return a certificate (SSL routines)")))
+    return [r for r in out if r[1][:19] <= now.strftime("%Y-%m-%d %H:%M:%S")]
 
 
 def main():

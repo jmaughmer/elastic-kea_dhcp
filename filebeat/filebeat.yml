@@ -1,9 +1,18 @@
 # Filebeat example for shipping Kea DHCP logs into the logs-kea.dhcp data stream.
 #
-# Assumes Kea's default file output in /var/log/kea/ (kea-dhcp4.log,
-# kea-dhcp6.log, kea-dhcp-ddns.log, kea-ctrl-agent.log). Kea rotates these
-# itself to <name>.log.1, .2, ...; the glob below follows the rotated files so
-# nothing is lost when a rotation happens mid-read.
+# Assumes Kea's file output in /var/log/kea/: kea-dhcp4.log, kea-dhcp6.log,
+# kea-dhcp-ddns.log, and kea-ctrl-agent.log on Kea older than 2.7.2 (newer
+# releases serve the API from the daemons and kea-ctrl-agent is not used).
+#
+# The glob reads every kea-*.log file, not only those four: a child logger
+# given its own output (for example kea-dhcp4.leases ->
+# kea-dhcp4-leases.log) writes only to that file, and its events are missing
+# from kea-dhcp4.log. Kea's forensic (legal) log files end in .txt and are
+# not read.
+#
+# Kea rotates its files itself to <name>.log.1, .2, ...; the glob follows the
+# rotated files so nothing is lost when a rotation happens mid-read. Kea 3
+# also keeps an empty <name>.log.lock next to each file, which is skipped.
 #
 # Requires Filebeat 8.12+ and the Elasticsearch assets from this repository
 # (scripts/install.sh). The index template sets index.default_pipeline, so
@@ -13,11 +22,8 @@ filebeat.inputs:
   - type: filestream
     id: kea-dhcp
     paths:
-      - /var/log/kea/kea-dhcp4.log*
-      - /var/log/kea/kea-dhcp6.log*
-      - /var/log/kea/kea-dhcp-ddns.log*
-      - /var/log/kea/kea-ctrl-agent.log*
-    prospector.scanner.exclude_files: ['\.gz$']
+      - /var/log/kea/kea-*.log*
+    prospector.scanner.exclude_files: ['\.gz$', '\.lock$']
     # Fingerprinting keeps file identity stable across Kea's rename-based rotation.
     file_identity.fingerprint: ~
     prospector.scanner.fingerprint.enabled: true

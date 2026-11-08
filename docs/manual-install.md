@@ -38,16 +38,25 @@ DELETE _index_template/logs-kea.dhcp
 2. Click **Add integration** and choose **Custom Logs (Filestream)**. The older **Custom Logs** integration also works; its settings are at the end of this section.
 3. Fill in the settings below and save. The agents pick up the change within a minute or so.
 
-**Log file paths.** Add one path per line. The `*` after `.log` also reads Kea's own rotated files (`.log.1`, `.log.2`, ...), so nothing is lost when Kea rotates a file in the middle of a read.
+**Log file path.**
 
 ```
-/var/log/kea/kea-dhcp4.log*
-/var/log/kea/kea-dhcp6.log*
-/var/log/kea/kea-dhcp-ddns.log*
-/var/log/kea/kea-ctrl-agent.log*
+/var/log/kea/kea-*.log*
 ```
 
-Drop the services you don't run.
+This reads every Kea log file:
+
+- `kea-dhcp4.log`, `kea-dhcp6.log` and `kea-dhcp-ddns.log`.
+- `kea-ctrl-agent.log`, on Kea releases older than 2.7.2. From 2.7.2 the daemons serve the API themselves and kea-ctrl-agent is not used.
+- Any file a child logger writes to. A logger such as `kea-dhcp4.leases` given its own output file writes only there, so its events never reach `kea-dhcp4.log`. The Ansible role [ansible-role-kea_dhcp](https://github.com/jmaughmer/ansible-role-kea_dhcp) sets these up with `kea_dhcp4_extra_loggers` and the like.
+
+The `*` after `.log` also reads Kea's own rotated files (`.log.1`, `.log.2`, ...), so nothing is lost when Kea rotates a file in the middle of a read. Kea's forensic (legal) log files end in `.txt` and are not read.
+
+**Excluded files.** Kea 3 keeps an empty `.lock` file next to each log. Skip those and any compressed files. If your integration has an **Exclude files** field, enter `\.gz$` and `\.lock$` there. Otherwise add this to **Custom configurations**:
+
+```yaml
+prospector.scanner.exclude_files: ['\.gz$', '\.lock$']
+```
 
 **Dataset name:** `kea.dhcp`
 
@@ -83,10 +92,11 @@ Again, if your version has no **Processors** box, put it in **Custom configurati
 
 ### Older "Custom Logs" integration
 
-Use the same paths, dataset name and namespace. The pipeline, multiline and processor settings all go in **Custom configurations**:
+Use the same path, dataset name and namespace. The pipeline, exclusions, multiline and processor settings all go in **Custom configurations**:
 
 ```yaml
 pipeline: logs-kea.dhcp
+exclude_files: ['\.gz$', '\.lock$']
 multiline.type: pattern
 multiline.pattern: '^\d{4}-\d{2}-\d{2} '
 multiline.negate: true
@@ -108,7 +118,7 @@ Elastic Agent runs as root by default and can read `/var/log/kea/`. If you run t
 This adds:
 - the **Kea DHCP logs** data view (`logs-kea.dhcp-*`)
 - the **Kea DHCP errors and warnings** saved search
-- 14 Lens visualizations
+- 19 Lens visualizations
 - the **[Kea DHCP] Overview** dashboard
 
 ## 4. Check it works
@@ -138,6 +148,11 @@ The integration isn't sending events through the pipeline. Check the `pipeline: 
 **Packet dumps show up as many one-line events.**
 The multiline parser is missing from the integration.
 
+**Lease panels are empty, but other Kea events arrive.**
+A child logger such as `kea-dhcp4.leases` writes to its own file, and the integration doesn't read it. Use the `/var/log/kea/kea-*.log*` path from step 2.
+
 ## Upgrading
 
 When this repository changes the pipeline or mappings, paste the updated `install-fleet.txt` into Dev Tools again and send it. To pick up mapping changes, roll the data stream over as shown above. Re-import the dashboard NDJSON the same way, with overwrite on.
+
+From pipeline 1.0.0 to 1.1.0, also change the integration's log file paths to the single `/var/log/kea/kea-*.log*` path, and add the exclusions from step 2.

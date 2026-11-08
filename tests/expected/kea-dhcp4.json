@@ -684,6 +684,7 @@
       "kind": "event",
       "module": "kea",
       "outcome": "failure",
+      "reason": "client reported the address in use",
       "type": [
         "denied"
       ]
@@ -1227,6 +1228,7 @@
       "ha": {
         "partner_state": "READY",
         "previous_state": "WAITING",
+        "server_name": "server1",
         "state": "READY"
       },
       "logger": {
@@ -1238,10 +1240,6 @@
       "logger": "kea-dhcp4.ha-hooks"
     },
     "message": "server1: server transitions from WAITING to READY state, partner state is READY",
-    "network": {
-      "protocol": "dhcp",
-      "type": "ipv4"
-    },
     "process": {
       "name": "kea-dhcp4",
       "pid": 1873,

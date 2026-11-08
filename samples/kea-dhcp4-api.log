@@ -1,0 +1,16 @@
+2026-10-27 08:00:00.937 WARN  [kea-dhcp4.dhcpsrv/1873.140226115839872] DHCPSRV_MT_DISABLED_QUEUE_CONTROL disabling dhcp queue control when multi-threading is enabled.
+2026-10-27 08:00:00.937 WARN  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_RESERVATIONS_LOOKUP_FIRST_ENABLED Multi-threading is enabled and host reservations lookup is always performed first.
+2026-10-27 08:00:00.939 INFO  [kea-dhcp4.commands/1873.140226115839872] HTTP_COMMAND_MGR_SERVICE_STARTED started HTTPS service bound to address: 192.0.2.2 port: 8004
+2026-10-27 08:02:54.323 INFO  [kea-dhcp4.auth/1873.140226115839872] HTTP_CLIENT_REQUEST_AUTHORIZED received HTTP request authorized for 'phpipam'
+2026-10-27 08:02:54.323 INFO  [kea-dhcp4.commands/1873.140226115839872] COMMAND_RECEIVED Received command 'config-get'
+2026-10-27 08:02:55.101 INFO  [kea-dhcp4.commands/1873.140226115839872] COMMAND_RECEIVED Received command 'reservation-add'
+2026-10-27 08:02:55.101 INFO  [kea-dhcp4.host-cmds-hooks/1873.140226115839872] HOST_CMDS_RESERV_ADD_SUCCESS reservation-add command success (parameters: { "reservation": { "hostname": "host21", "hw-address": "aa:bb:cc:00:00:21", "ip-address": "192.0.2.21", "subnet-id": 1 } })
+2026-10-27 08:03:28.139 INFO  [kea-dhcp4.auth/1873.140226115839872] HTTP_CLIENT_REQUEST_NOT_AUTHORIZED received HTTP request with not matching authentication header
+2026-10-27 08:03:28.605 INFO  [kea-dhcp4.auth/1873.140226115839872] HTTP_CLIENT_REQUEST_NO_AUTH_HEADER received HTTP request without required authentication header
+2026-10-27 08:04:45.949 INFO  [kea-dhcp4.http/1873.140226115839872] HTTP_CONNECTION_HANDSHAKE_FAILED TLS handshake with 198.51.100.7 failed with peer did not return a certificate (SSL routines)
+2026-10-27 08:10:13.634 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_DYNAMIC_RECONFIGURATION initiate server reconfiguration using file: /etc/kea/kea-dhcp4.conf, after receiving SIGHUP signal or config-reload command
+2026-10-27 08:10:13.680 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_CONFIG_COMPLETE DHCPv4 server has completed configuration: added IPv4 subnets: 2; DDNS: enabled
+2026-10-27 08:10:13.683 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_DYNAMIC_RECONFIGURATION_SUCCESS dynamic server reconfiguration succeeded with file: /etc/kea/kea-dhcp4.conf
+2026-10-27 08:15:02.001 INFO  [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_DYNAMIC_RECONFIGURATION initiate server reconfiguration using file: /etc/kea/kea-dhcp4.conf, after receiving SIGHUP signal or config-reload command
+2026-10-27 08:15:02.050 ERROR [kea-dhcp4.dhcp4/1873.140226115839872] DHCP4_DYNAMIC_RECONFIGURATION_FAIL dynamic server reconfiguration failed with file: /etc/kea/kea-dhcp4.conf
+2026-10-27 08:20:09.330 INFO  [kea-dhcp4.leases/1873.140226107447040] DHCP4_SERVER_INITIATED_DECLINE [hwtype=1 a4:83:e7:01:02:04], cid=[no info], tid=0x0badf00e: Lease for addr 192.0.2.13 has been found to be already in use. The lease will be unavailable for 86400 seconds.
