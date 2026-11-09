@@ -7,7 +7,7 @@ Writes:
   elasticsearch/ingest_pipeline/logs-kea.dhcp.json   pipeline JSON, from the YAML source
   elasticsearch/dev_tools/install-fleet.txt          Kibana Dev Tools console requests
 
---check exits non-zero when a committed file is out of date (scripts/test-local.sh runs it).
+--check exits non-zero when a committed file is out of date (scripts/test.sh runs it).
 """
 import json
 import pathlib
